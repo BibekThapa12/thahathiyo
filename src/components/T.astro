@@ -1,7 +1,7 @@
 ---
-// One piece of text in three languages; html[data-lang] (set by the header switch) shows one.
-// Missing English or NepEnglish falls back to Nepali.
+// Site text. The site is English-only: shows `en`, falling back to `ne` when no English was written.
+// (ne/mix props on existing call sites are leftovers from the removed language switch.)
 interface Props { ne: string; en?: string; mix?: string }
-const { ne, en, mix } = Astro.props;
+const { ne, en } = Astro.props;
 ---
-<span class="l-ne">{ne}</span><span class="l-en" lang={en ? "en" : undefined}>{en || ne}</span><span class="l-mix">{mix || ne}</span>
+{en || ne}

@@ -11,11 +11,11 @@ const nav = [
 ---
 <header class="site-header">
   <div class="wrap bar">
-    <a class="brand" href={u("")} aria-label="थाहा थियो? गृहपृष्ठ | Home">
+    <a class="brand" href={u("")} aria-label="Thaha Thiyo home">
       <LogoMark size={46} />
       <span class="word">थाहा थियो?<small>Thaha Thiyo</small></span>
     </a>
-    <nav aria-label="मुख्य | Main">
+    <nav aria-label="Main">
       <ul>
         {nav.map((n) => (
           <li>
@@ -26,11 +26,6 @@ const nav = [
         ))}
       </ul>
     </nav>
-    <div class="lang" role="group" aria-label="भाषा · Language">
-      <button type="button" data-set-lang="ne" aria-pressed="true">नेपाली</button>
-      <button type="button" data-set-lang="en" aria-pressed="false" lang="en">English</button>
-      <button type="button" data-set-lang="mix" aria-pressed="false">नेपा-Eng</button>
-    </div>
     <div class="socials"><FollowButtons compact label="Follow @thahathiyo" /></div>
   </div>
   <div class="tri"></div>
@@ -93,37 +88,6 @@ const nav = [
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-  /* language switch: one pill, the active language filled gold */
-  .lang {
-    display: flex;
-    border: 2px solid var(--ink);
-    border-radius: 999px;
-    overflow: hidden;
-    background: #fffaf0;
-  }
-  .lang button {
-    all: unset;
-    cursor: pointer;
-    min-height: 44px;
-    padding: 0 10px;
-    display: flex;
-    align-items: center;
-    font: 800 0.85rem/1 var(--font);
-    transition: background-color 150ms ease;
-  }
-  .lang button:active {
-    background: var(--cream-2);
-  }
-  .lang button + button {
-    border-left: 2px solid var(--ink);
-  }
-  .lang button[aria-pressed="true"] {
-    background: var(--gold);
-  }
-  .lang button:focus-visible {
-    outline: 3px solid var(--indigo);
-    outline-offset: -5px;
   }
   nav a[aria-current="page"] {
     border-color: var(--ink);

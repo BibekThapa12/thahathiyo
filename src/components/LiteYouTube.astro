@@ -7,7 +7,7 @@ const { id, title, eager = false, art } = Astro.props;
 const thumb = `https://i.ytimg.com/vi/${id}/oar2.jpg`; // full 1080x1920 Short frame
 ---
 <div class="lite-yt card" data-id={id} data-title={title}>
-  <button type="button" class="lite-btn" aria-label={`भिडियो चलाउनुहोस्: ${title} | Play video`}>
+  <button type="button" class="lite-btn" aria-label={`Play video: ${title}`}>
     <VideoArt art={art} label="" />
     <img onerror="this.remove()" src={thumb} alt="" width="1080" height="1920" loading={eager ? "eager" : "lazy"} decoding="async" fetchpriority={eager ? "high" : "auto"} />
     <span class="lite-play" aria-hidden="true"></span>

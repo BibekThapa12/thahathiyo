@@ -32,37 +32,10 @@ const orgLd = {
 const ld = [orgLd, ...(jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [])];
 ---
 <!doctype html>
-<html lang="ne" data-lang="ne">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script is:inline>
-      // Language switch (ne | en | mix). Runs before paint so there is no flash; page swaps reset <html>, so re-apply after each.
-      (function () {
-        if (window.__lang) return window.__lang.apply();
-        var mem = null;
-        var get = function () { try { return localStorage.getItem("lang") || mem; } catch (e) { return mem; } };
-        var apply = function () {
-          var l = get();
-          if (l !== "en" && l !== "mix") l = "ne";
-          var h = document.documentElement;
-          h.dataset.lang = l;
-          h.lang = l === "en" ? "en" : "ne";
-          document.querySelectorAll("[data-set-lang]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.setLang === l)); });
-        };
-        window.__lang = { apply: apply };
-        apply();
-        document.addEventListener("DOMContentLoaded", apply);
-        document.addEventListener("astro:after-swap", apply);
-        document.addEventListener("click", function (e) {
-          var b = e.target.closest && e.target.closest("[data-set-lang]");
-          if (!b) return;
-          mem = b.dataset.setLang;
-          try { localStorage.setItem("lang", mem); } catch (err) {}
-          apply();
-        });
-      })();
-    </script>
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -80,8 +53,7 @@ const ld = [orgLd, ...(jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : []
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
-    <meta property="og:locale" content="ne_NP" />
-    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:locale" content="en_US" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />

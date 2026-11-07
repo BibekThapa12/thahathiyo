@@ -33,13 +33,13 @@ const soonTag =
   : { ne: "छिट्टै आउँदैछ", en: "Coming soon", mix: "Coming soon!" };
 const latest = all.find((x) => x.status === "published" && x.youtubeId);
 const subscribeUrl = `${SOCIALS[0].url}?sub_confirmation=1`;
-const desc = [v.description, v.descriptionEn].filter(Boolean).join(" — ").slice(0, 300);
+const desc = [v.descriptionEn, v.description].filter(Boolean).join(" — ").slice(0, 300);
 const jsonLd = v.youtubeId
   ? {
       "@context": "https://schema.org",
       "@type": "VideoObject",
-      name: [v.titleNe, v.titleEn].filter(Boolean).join(" | "),
-      description: desc || v.titleNe,
+      name: [v.titleEn, v.titleNe].filter(Boolean).join(" | "),
+      description: desc || v.titleEn || v.titleNe,
       thumbnailUrl: [`https://i.ytimg.com/vi/${v.youtubeId}/hqdefault.jpg`],
       uploadDate: v.date ? `${v.date}T19:00:00+05:45` : undefined,
       embedUrl: `https://www.youtube.com/embed/${v.youtubeId}`,
@@ -56,13 +56,13 @@ const crumbs = {
   itemListElement: [
     { "@type": "ListItem", position: 1, name: "थाहा थियो?", item: abs("", Astro.site) },
     { "@type": "ListItem", position: 2, name: "भिडियो", item: abs("videos/", Astro.site) },
-    { "@type": "ListItem", position: 3, name: v.titleNe, item: abs(`videos/${v.slug}/`, Astro.site) },
+    { "@type": "ListItem", position: 3, name: v.titleEn || v.titleNe, item: abs(`videos/${v.slug}/`, Astro.site) },
   ],
 };
 ---
 <Base
-  title={v.titleEn ? `${v.titleNe} | ${v.titleEn}` : v.titleNe}
-  description={desc || `${v.titleNe} — थाहा थियो? नेपाली तथ्य भिडियो`}
+  title={v.titleEn || v.titleNe}
+  description={desc || `${v.titleEn || v.titleNe}: a Thaha Thiyo fact video`}
   image={ogImageFor(v)}
   type="video.other"
   jsonLd={jsonLd ? [jsonLd, crumbs] : crumbs}
@@ -74,10 +74,10 @@ const crumbs = {
     <div class="layout">
       <div class="player">
         {v.youtubeId ? (
-          <LiteYouTube id={v.youtubeId} title={v.titleNe} art={v.art} eager />
+          <LiteYouTube id={v.youtubeId} title={v.titleEn || v.titleNe} art={v.art} eager />
         ) : (
           <div class="soon card">
-            <VideoArt art={v.art} label={v.titleNe} />
+            <VideoArt art={v.art} label={v.titleEn || v.titleNe} />
             <p class="soon-tag"><T {...soonTag} />{fest && daysLeft >= 0 && <small><T ne={dateNe(fest.date)} en={dateEn(fest.date)} /></small>}</p>
           </div>
         )}
@@ -86,7 +86,7 @@ const crumbs = {
           <span><T ne="युट्युबमा फलो गर्नुहोस्" en="Follow on YouTube" mix="YouTube मा Follow गर्नुस्" /></span>
         </a>
         {soon && latest && (
-          <a class="meanwhile" href={u(`videos/${latest.slug}/`)}><T ne="यसबीचमा हेर्नुहोस्:" en="Meanwhile, watch:" mix="Meanwhile यो हेर्नुस्:" /> <strong>{latest.titleNe || latest.titleEn}</strong> <span aria-hidden="true">→</span></a>
+          <a class="meanwhile" href={u(`videos/${latest.slug}/`)}><T ne="यसबीचमा हेर्नुहोस्:" en="Meanwhile, watch:" mix="Meanwhile यो हेर्नुस्:" /> <strong>{latest.titleEn || latest.titleNe}</strong> <span aria-hidden="true">→</span></a>
         )}
         <div class="watch"><WatchOn video={v} /></div>
       </div>
@@ -97,8 +97,8 @@ const crumbs = {
           <a href={u(`#topic-${v.topic}`)}><T ne={topic.ne} en={topic.en} mix={topic.mix} /></a>
           {v.date && <><span aria-hidden="true">·</span><time datetime={v.date}><T ne={dateNe(v.date)} en={dateEn(v.date)} /></time></>}
         </p>
-        <h1>{v.titleNe || v.titleEn}</h1>
-        {(v.description || v.descriptionEn) && <p class="lead">{v.description || v.descriptionEn}</p>}
+        <h1>{v.titleEn || v.titleNe}</h1>
+        {(v.descriptionEn || v.description) && <p class="lead">{v.descriptionEn || v.description}</p>}
 
         {v.facts.length > 0 ? (
           <section class="facts card" aria-labelledby="facts-h">
@@ -106,7 +106,7 @@ const crumbs = {
             <ol>
               {v.facts.map((f) => (
                 <li>
-                  <p class="fne">{f.ne || f.en}</p>
+                  <p class="fne">{f.en || f.ne}</p>
                 </li>
               ))}
             </ol>
@@ -133,7 +133,7 @@ const crumbs = {
 
     <div class="closing">
         <section class="ask band" aria-labelledby="ask-h">
-          <div class="ask-art"><MascotBurst mood="point" label="थाहा फलो बटनतिर देखाउँदै" /></div>
+          <div class="ask-art"><MascotBurst mood="point" label="Thaha pointing at the follow buttons" /></div>
           <div class="bubble">
             {soon ? (
               <h2 id="ask-h"><T ne="यो भिडियो छिट्टै आउँदैछ। पहिलै हेर्न फलो गर्नुहोस्!" en="Coming soon. Follow to see it first!" mix="यो video छिट्टै आउँदैछ। पहिलै हेर्न Follow गर्नुस्!" /></h2>

@@ -14,7 +14,7 @@ const Stars: React.FC<{ w: number; h: number; n?: number }> = ({ w, h, n = 22 })
 );
 
 /** Hero diorama: Himalaya, pagoda, Newari houses, prayer flags, diyas, thaha waving, crow on a roof. */
-export const HeroScene: React.FC<{ title?: string }> = ({ title = "थाहा, थाहा थियो? च्यानलको मस्कट, काठमाडौंको दरबार क्षेत्रमा हात हल्लाउँदै" }) => (
+export const HeroScene: React.FC<{ title?: string }> = ({ title = "Thaha, the Thaha Thiyo mascot, waving in a Kathmandu Durbar Square scene" }) => (
   <svg viewBox="0 0 1080 1000" role="img" aria-label={title} className="scene hero-scene" preserveAspectRatio="xMidYMax slice">
     <Defs />
     <rect width={1080} height={1000} fill="url(#sky-folk)" />
@@ -145,7 +145,7 @@ export const VideoArt: React.FC<{ art?: string; label?: string }> = ({ art = "ma
 };
 
 /** Mascot on a sunburst for empty states, about, 404. */
-export const MascotBurst: React.FC<{ mood?: Mood; label?: string; crow?: boolean }> = ({ mood = "smile", label = "थाहा, थाहा थियो? को मस्कट", crow }) => (
+export const MascotBurst: React.FC<{ mood?: Mood; label?: string; crow?: boolean }> = ({ mood = "smile", label = "Thaha, the Thaha Thiyo mascot", crow }) => (
   <svg viewBox="0 0 600 660" role="img" aria-label={label} className="scene mascot-burst">
     <Defs />
     <Sunburst cx={300} cy={330} r={290} n={20} />

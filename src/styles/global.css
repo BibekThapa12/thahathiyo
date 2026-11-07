@@ -92,19 +92,6 @@ p {
   opacity: 0.82;
   margin-top: 0.15em;
 }
-/* language switch: html[data-lang] shows one of the three versions written by T.astro */
-.l-en,
-.l-mix {
-  display: none;
-}
-:root[data-lang="en"] .l-ne,
-:root[data-lang="mix"] .l-ne {
-  display: none;
-}
-:root[data-lang="en"] .l-en,
-:root[data-lang="mix"] .l-mix {
-  display: inline;
-}
 .muted {
   opacity: 0.75;
 }

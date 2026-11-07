@@ -23,11 +23,11 @@ const meta = {
       {v.thumbnail && <img src={v.thumbnail} alt="" width="1080" height="1920" loading={eager ? "eager" : "lazy"} decoding="async" onerror="this.remove()" />}
       {v.status === "coming-soon" && <span class="soon"><T ne="छिट्टै आउँदैछ" en="Coming soon" mix="Coming soon!" /></span>}
     </div>
-    <h3>{v.titleNe || v.titleEn}</h3>
+    <h3>{v.titleEn || v.titleNe}</h3>
     <p class="meta"><T {...meta} /></p>
   </a>
   {platformLinks(v).length > 0 && (
-    <ul class="apps" aria-label={`${v.titleNe || v.titleEn}: apps`}>
+    <ul class="apps" aria-label={`${v.titleEn || v.titleNe}: apps`}>
       {platformLinks(v).map((l) => <li><a class={l.id} href={l.url} target="_blank" rel="noopener" aria-label={l.name} title={l.name}><SocialIcon id={l.id} /></a></li>)}
     </ul>
   )}

@@ -33,7 +33,7 @@ A Nepali-language fact channel where every video has its own page listing the ke
 - Static Astro site, deployed to GitHub Pages; no server, no accounts, no comments.
 - Folk-art drawings are React SVG components shared with the video kit, rendered to static SVG at build time (no React in the browser).
 - YouTube embeds load only on tap (click-to-load player).
-- Current pages are bilingual, Nepali leading with English beneath; whether that is a fixed rule is not decided.
+- The site is English-only (decided 2026-11-07): site text and video titles, descriptions and facts use the English versions; the brand name थाहा थियो? stays in Devanagari. The videos themselves are in Nepali.
 - Current copy labels traditions as “भनिन्छ / मान्यता” (belief) rather than proven fact; not confirmed as a binding design rule.
 
 ## Brand Commitments

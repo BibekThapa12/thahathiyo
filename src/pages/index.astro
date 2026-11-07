@@ -20,8 +20,8 @@ const latest = published.find((v) => v.youtubeId);
 const rest = videos.filter((v) => v !== latest);
 ---
 <Base
-  title="थाहा थियो? | Thaha Thiyo — नेपालीमा रोचक तथ्य · Facts in Nepali"
-  description="थाहा थियो? — नेपाल र संसारका रोचक तथ्य, १ मिनेटमै बुझिने छोटा नेपाली भिडियो। Facts and explainers in Nepali: festivals, history, science and business."
+  title="थाहा थियो? | Thaha Thiyo — Facts in Nepali, every day"
+  description="One-minute fact videos in Nepali about Nepal and the world: festivals, history, science and business. Every video comes with its key facts and sources."
 >
   <section class="hero band">
     <div class="wrap hero-grid">
@@ -46,11 +46,11 @@ const rest = videos.filter((v) => v !== latest);
       </div>
       {latest && (
         <article class="feature" data-topic-item={latest.topic} aria-labelledby="latest-h">
-          <LiteYouTube id={latest.youtubeId} title={latest.titleNe} art={latest.art} eager />
+          <LiteYouTube id={latest.youtubeId} title={latest.titleEn || latest.titleNe} art={latest.art} eager />
           <div class="feature-copy">
           <p class="latest-meta"><strong><T ne="नयाँ भिडियो" en="New video" mix="Fresh video" /></strong> · <T ne={`#${ne(latest.number)}${latest.date ? ` · ${dateNe(latest.date)}` : ""} · ${topicOf(latest.topic).ne}`} en={`#${latest.number}${latest.date ? ` · ${dateEn(latest.date)}` : ""} · ${topicOf(latest.topic).en}`} mix={`#${ne(latest.number)}${latest.date ? ` · ${dateNe(latest.date)}` : ""} · ${topicOf(latest.topic).mix}`} /></p>
-            <h3 id="latest-h">{latest.titleNe || latest.titleEn}</h3>
-            {(latest.description || latest.descriptionEn) && <p class="latest-desc">{latest.description || latest.descriptionEn}</p>}
+            <h3 id="latest-h">{latest.titleEn || latest.titleNe}</h3>
+            {(latest.descriptionEn || latest.description) && <p class="latest-desc">{latest.descriptionEn || latest.description}</p>}
             <WatchOn video={latest} />
             <a class="btn" href={u(`videos/${latest.slug}/`)}><T ne="तथ्य र स्रोत हेर्नुहोस् →" en="Facts & sources →" mix="Facts र sources हेर्नुस् →" /></a>
           </div>

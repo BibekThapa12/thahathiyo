@@ -4,7 +4,7 @@
 import { TOPICS } from "../data/site";
 import T from "./T.astro";
 ---
-<ul class="chips" aria-label="विषय · Topics">
+<ul class="chips" aria-label="Topics">
   <li><button type="button" class="chip" data-filter="all" aria-pressed="true"><T ne="सबै" en="All" mix="सबै" /></button></li>
   {TOPICS.map((t) => (
     <li><button type="button" class={`chip ${t.id}`} data-filter={t.id} aria-pressed="false"><T ne={t.ne} en={t.en} mix={t.mix} /></button></li>
