@@ -110,6 +110,10 @@ const nav = [
     display: flex;
     align-items: center;
     font: 800 0.85rem/1 var(--font);
+    transition: background-color 150ms ease;
+  }
+  .lang button:active {
+    background: var(--cream-2);
   }
   .lang button + button {
     border-left: 2px solid var(--ink);
@@ -121,10 +125,15 @@ const nav = [
     outline: 3px solid var(--indigo);
     outline-offset: -5px;
   }
-  nav a:hover,
   nav a[aria-current="page"] {
     border-color: var(--ink);
     background: var(--gold);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    nav a:hover {
+      border-color: var(--ink);
+      background: var(--gold);
+    }
   }
   .tri {
     position: absolute;

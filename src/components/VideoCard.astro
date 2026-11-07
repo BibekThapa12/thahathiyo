@@ -45,11 +45,18 @@ const meta = {
     border: 2px solid var(--ink);
     border-radius: 14px;
     overflow: hidden;
-    transition: transform 0.15s, box-shadow 0.15s;
+    transition: transform 160ms var(--ease-out), box-shadow 160ms var(--ease-out);
   }
-  .link:hover .thumb {
-    transform: translate(-2px, -2px);
-    box-shadow: 4px 4px 0 var(--ink);
+  /* lift on hover only for real pointers; on touch the card presses in instead */
+  @media (hover: hover) and (pointer: fine) {
+    .link:hover .thumb {
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+  }
+  .link:active .thumb {
+    transform: scale(0.98);
+    transition-duration: 120ms;
   }
   .thumb img,
   .thumb :global(svg) {
@@ -93,9 +100,15 @@ const meta = {
     width: 40px;
     height: 40px;
     border-radius: 50%;
+    transition: background-color 150ms ease, transform 120ms var(--ease-out);
   }
-  .apps a:hover {
-    background: var(--cream-2);
+  @media (hover: hover) and (pointer: fine) {
+    .apps a:hover {
+      background: var(--cream-2);
+    }
+  }
+  .apps a:active {
+    transform: scale(0.92);
   }
   .apps :global(.ico) {
     width: 22px;

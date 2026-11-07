@@ -212,9 +212,15 @@ const crumbs = {
     background: #fffaf0;
     text-decoration: none;
     font-size: 0.95rem;
+    transition: background-color 150ms ease, transform 120ms var(--ease-out);
   }
-  .meanwhile:hover {
-    background: var(--gold);
+  @media (hover: hover) and (pointer: fine) {
+    .meanwhile:hover {
+      background: var(--gold);
+    }
+  }
+  .meanwhile:active {
+    transform: scale(0.98);
   }
   @media (max-width: 859px) {
     .player .soon {
@@ -321,9 +327,15 @@ const crumbs = {
     font-weight: 800;
     font-size: 0.92rem;
     text-decoration: none;
+    transition: background-color 150ms ease, transform 120ms var(--ease-out);
   }
-  .wo:hover {
-    background: var(--gold);
+  @media (hover: hover) and (pointer: fine) {
+    .wo:hover {
+      background: var(--gold);
+    }
+  }
+  .wo:active {
+    transform: scale(0.97);
   }
   .wo :global(.ico) {
     width: 22px;
