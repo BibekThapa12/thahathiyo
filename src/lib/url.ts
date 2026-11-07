@@ -5,5 +5,5 @@ export const u = (p = "") => BASE + p.replace(/^\//, "");
 
 export const abs = (p: string, site: URL | undefined) => {
   if (/^https?:/.test(p)) return p;
-  return new URL(u(p), site ?? "https://thahathiyo.github.io").href;
+  return new URL(u(p), site ?? "https://thahathiyo.vercel.app").href;
 };

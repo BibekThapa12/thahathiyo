@@ -3,9 +3,9 @@ import { defineConfig } from "astro/config";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 
-// SITE_URL / BASE_PATH are set by the GitHub Pages workflow (or your host).
-// Custom domain later (e.g. thahathiyo.com): SITE_URL=https://thahathiyo.com BASE_PATH=/
-const site = process.env.SITE_URL || "https://thahathiyo.github.io";
+// The main site is https://thahathiyo.vercel.app (Vercel builds it with no env vars, so that is the default).
+// The GitHub Pages copy sets SITE_URL / BASE_PATH in its workflow. Custom domain later: set SITE_URL=https://thahathiyo.com.
+const site = process.env.SITE_URL || "https://thahathiyo.vercel.app";
 const base = process.env.BASE_PATH || "/";
 
 export default defineConfig({
