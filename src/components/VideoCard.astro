@@ -33,7 +33,29 @@ const meta = {
   )}
 </article>
 <style>
-  /* The thumbnail is the card: one ink frame, text sits on the page below it. */
+  /* One card style site-wide: cream card, ink border; thumbnail framed inside, title/meta/apps below */
+  .vcard {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 10px 4px;
+    background: #fffaf0;
+    border: 2px solid var(--ink);
+    border-radius: 16px;
+    box-shadow: 4px 4px 0 var(--ink);
+    transition: transform 160ms var(--ease-out), box-shadow 160ms var(--ease-out);
+  }
+  /* lift on hover only for real pointers; on touch the card presses in instead */
+  @media (hover: hover) and (pointer: fine) {
+    .vcard:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0 var(--ink);
+    }
+  }
+  .vcard:has(.link:active) {
+    transform: scale(0.98);
+    transition-duration: 120ms;
+  }
   .link {
     display: block;
     text-decoration: none;
@@ -43,20 +65,8 @@ const meta = {
     aspect-ratio: 9 / 16;
     background: var(--indigo);
     border: 2px solid var(--ink);
-    border-radius: 14px;
+    border-radius: 10px;
     overflow: hidden;
-    transition: transform 160ms var(--ease-out), box-shadow 160ms var(--ease-out);
-  }
-  /* lift on hover only for real pointers; on touch the card presses in instead */
-  @media (hover: hover) and (pointer: fine) {
-    .link:hover .thumb {
-      transform: translate(-2px, -2px);
-      box-shadow: 4px 4px 0 var(--ink);
-    }
-  }
-  .link:active .thumb {
-    transform: scale(0.98);
-    transition-duration: 120ms;
   }
   .thumb img,
   .thumb :global(svg) {
@@ -91,7 +101,7 @@ const meta = {
   .apps {
     list-style: none;
     display: flex;
-    margin: 2px 0 0 -8px;
+    margin: auto 0 0 -8px; /* auto: icons sit at the card bottom so rows line up */
     padding: 0;
   }
   .apps a {

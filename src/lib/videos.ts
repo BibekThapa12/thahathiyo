@@ -114,6 +114,9 @@ const slugify = (s: string) =>
     .replace(/^-|-$/g, "")
     .slice(0, 60);
 
+// The admin form takes a full YouTube link; keep only the 11-character video ID.
+const ytId = (s = "") => s.match(/(?:shorts\/|v=|youtu\.be\/|embed\/)([\w-]{11})/)?.[1] ?? s.trim();
+
 // oar2 is the Short's own 1080x1920 frame; hqdefault is 480x360 with the Short as a ~200px-wide strip.
 const thumb = (id: string) => (id ? `https://i.ytimg.com/vi/${id}/oar2.jpg` : "");
 
@@ -124,7 +127,8 @@ export function getVideos(): Promise<Video[]> {
 }
 
 async function build(): Promise<Video[]> {
-  const entries = (raw as VideoEntry[]).map((v) => ({ ...v }));
+  // slug may be left empty in the admin form: it then comes from the title
+  const entries = (raw as VideoEntry[]).map((v) => ({ ...v, youtubeId: ytId(v.youtubeId), slug: v.slug || slugify(v.titleEn || v.titleNe) }));
   const rss = await fetchRss();
   const added: VideoEntry[] = [];
 

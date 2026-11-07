@@ -44,8 +44,11 @@ const rest = videos.filter((v) => v !== latest);
         <h2 id="videos-h"><T ne="भिडियो" en="Videos" mix="Videos" /></h2>
         <TopicChips />
       </div>
+      {videos.length ? (
+      <ul class="board">
       {latest && (
-        <article class="feature" data-topic-item={latest.topic} aria-labelledby="latest-h">
+        <li class="feature-cell" data-topic-item={latest.topic}>
+        <article class="feature" aria-labelledby="latest-h">
           <LiteYouTube id={latest.youtubeId} title={latest.titleEn || latest.titleNe} art={latest.art} eager />
           <div class="feature-copy">
           <p class="latest-meta"><strong><T ne="नयाँ भिडियो" en="New video" mix="Fresh video" /></strong> · <T ne={`#${ne(latest.number)}${latest.date ? ` · ${dateNe(latest.date)}` : ""} · ${topicOf(latest.topic).ne}`} en={`#${latest.number}${latest.date ? ` · ${dateEn(latest.date)}` : ""} · ${topicOf(latest.topic).en}`} mix={`#${ne(latest.number)}${latest.date ? ` · ${dateNe(latest.date)}` : ""} · ${topicOf(latest.topic).mix}`} /></p>
@@ -55,9 +58,10 @@ const rest = videos.filter((v) => v !== latest);
             <a class="btn" href={u(`videos/${latest.slug}/`)}><T ne="तथ्य र स्रोत हेर्नुहोस् →" en="Facts & sources →" mix="Facts र sources हेर्नुस् →" /></a>
           </div>
         </article>
+        </li>
       )}
-      {videos.length ? (
-        <ul class="vgrid">{rest.map((v) => <li data-topic-item={v.topic}><VideoCard video={v} /></li>)}</ul>
+      {rest.map((v) => <li data-topic-item={v.topic}><VideoCard video={v} /></li>)}
+      </ul>
       ) : (
         <div class="empty card"><MascotBurst mood="wonder" /><p><T ne="भिडियो छिट्टै आउँदैछन्!" en="Videos coming soon!" mix="Videos छिट्टै आउँदैछन्!" /></p></div>
       )}
@@ -176,6 +180,10 @@ const rest = videos.filter((v) => v !== latest);
     }
   }
   /* one video section: heading + filter, the newest video featured, then the rest */
+  #videos {
+    padding-top: 32px;
+    padding-bottom: 32px;
+  }
   .vhead {
     display: flex;
     flex-wrap: wrap;
@@ -187,16 +195,42 @@ const rest = videos.filter((v) => v !== latest);
   .vhead h2 {
     margin: 0;
   }
-  .feature {
+  /* the board: featured card + video cards share one grid (phone 2, tablet 3, desktop featured-left + 3).
+     Compact on purpose: the whole section fits one 1440x900 screen. */
+  .board {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: grid;
-    gap: 20px;
-    padding-bottom: 36px;
-    margin-bottom: 36px;
-    border-bottom: 2px solid var(--ink);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 14px;
+    align-items: stretch;
+  }
+  .feature-cell {
+    grid-column: 1 / -1;
+  }
+  .feature {
+    height: 100%;
+    display: grid;
+    gap: 16px;
+    align-content: start;
+    padding: 14px;
+    background: #fffaf0;
+    border: 2px solid var(--ink);
+    border-radius: 16px;
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+  .feature :global(.lite-yt) {
+    /* phones: a full-width 9:16 player was ~690px tall and buried the title; cap it and centre it */
+    max-width: 300px;
+    margin-inline: auto;
+    border-radius: 10px;
+    box-shadow: none;
+    border-width: 2px;
   }
   .feature h3 {
-    font-size: clamp(1.5rem, 3.2vw, 2.3rem);
-    margin: 0 0 10px;
+    font-size: 1.5rem;
+    margin: 0 0 8px;
   }
   .latest-meta {
     margin: 0 0 6px;
@@ -214,14 +248,54 @@ const rest = videos.filter((v) => v !== latest);
     margin-bottom: 18px;
   }
   .feature-copy :global(.watch-on) {
-    max-width: 460px;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
-  @media (min-width: 800px) {
+  .feature-copy .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  /* square covers on the home cards, cropped from the top so each Short's headline stays in view */
+  .board :global(.thumb) {
+    aspect-ratio: 1;
+  }
+  .board :global(.thumb img) {
+    object-position: top;
+  }
+  @media (min-width: 720px) {
+    .board {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 24px 20px;
+    }
+    /* tablet: featured card across the top, player beside its text */
     .feature {
-      grid-template-columns: 300px 1fr;
+      grid-template-columns: 260px 1fr;
       align-items: center;
-      gap: 48px;
+      gap: 28px;
+    }
+  }
+  @media (min-width: 1200px) {
+    /* desktop: the featured card (player beside its text) fills the left half across two rows,
+       three cards a row on the right; a filter that hides it lets the cards use all six columns */
+    .board {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 20px;
+    }
+    .feature-cell {
+      grid-column: 1 / span 3;
+      grid-row: 1 / span 2;
+    }
+    .feature {
+      /* minmax(0, …): the text column may shrink instead of pushing out of the card */
+      grid-template-columns: 250px minmax(0, 1fr);
+      align-items: center;
+      gap: 20px;
+    }
+    .feature h3 {
+      font-size: 1.3rem;
+    }
+    .feature-copy :global(.watch-on ul) {
+      grid-template-columns: 1fr;
+      gap: 6px;
     }
   }
   .about {

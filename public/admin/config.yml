@@ -1,0 +1,71 @@
+# Admin form for the videos (https://thahathiyo.vercel.app/admin/).
+# Sign in with a GitHub token (Contents: read & write on BibekThapa12/thahathiyo).
+backend:
+  name: github
+  repo: BibekThapa12/thahathiyo
+  branch: main
+  commit_messages:
+    update: "Update videos via admin"
+
+media_folder: public/uploads
+public_folder: /uploads
+
+collections:
+  - name: site
+    label: Videos
+    files:
+      - name: videos
+        label: All videos
+        file: src/data/videos.json
+        format: json
+        fields:
+          - name: videos
+            label: Videos
+            widget: list
+            root: true
+            add_to_top: true
+            collapsed: true
+            summary: "#{{number}}  {{titleEn}}"
+            fields:
+              - { name: number, label: "Video number", widget: number, value_type: int, hint: "1, 2, 3… the newest gets the highest number" }
+              - { name: titleEn, label: "Title", widget: string, hint: "As on YouTube" }
+              - { name: titleNe, label: "Nepali title (optional)", widget: string, required: false }
+              - { name: date, label: "Upload date", widget: datetime, time_format: false, format: "YYYY-MM-DD", required: false }
+              - name: topic
+                label: Topic
+                widget: select
+                options:
+                  - { label: Festivals, value: festivals }
+                  - { label: History, value: history }
+                  - { label: Science, value: science }
+                  - { label: Business, value: business }
+              - { name: descriptionEn, label: "Description", widget: text, required: false }
+              - { name: description, label: "Nepali description (optional)", widget: text, required: false }
+              - { name: youtubeId, label: "YouTube link", widget: string, required: false, hint: "Paste the Shorts link. Leave empty and the video shows as Coming soon." }
+              - { name: tiktokUrl, label: "TikTok link", widget: string, required: false }
+              - { name: instagramUrl, label: "Instagram link", widget: string, required: false }
+              - { name: facebookUrl, label: "Facebook link", widget: string, required: false }
+              - name: facts
+                label: Facts
+                widget: list
+                required: false
+                summary: "{{en}}"
+                fields:
+                  - { name: en, label: Fact, widget: text }
+                  - { name: ne, label: "Fact in Nepali (optional)", widget: text, required: false }
+              - name: sources
+                label: Sources
+                widget: list
+                required: false
+                summary: "{{title}}"
+                fields:
+                  - { name: title, label: "Source name", widget: string }
+                  - { name: url, label: "Link", widget: string }
+              - { name: slug, label: "Page address (optional)", widget: string, required: false, hint: "Leave empty to make it from the title. Don't change it after publishing: old links would break." }
+              - name: art
+                label: "Fallback picture (optional)"
+                widget: select
+                required: false
+                hint: "Shown only when the YouTube thumbnail can't load"
+                options: [mascot, crow, dog, diya, lake, flag, calendar, cans]
+              - { name: matchTitle, label: "Title keywords (optional)", widget: list, required: false, hint: "Only for Coming soon videos: words from the future YouTube title, so the upload links up automatically" }
