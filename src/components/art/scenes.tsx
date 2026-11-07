@@ -162,13 +162,20 @@ export const MascotBurst: React.FC<{ mood?: Mood; label?: string; crow?: boolean
   </svg>
 );
 
-/** Logo mark: gold disc with the crimson "?" (also the favicon). */
+/** Logo mark: थाहा's face on a gold disc (header, footer, and the favicon via pages/favicon.svg.ts). */
 export const LogoMark: React.FC<{ size?: number }> = ({ size = 44 }) => (
-  <svg viewBox="0 0 120 120" width={size} height={size} aria-hidden="true" className="logo-mark">
-    <circle cx={60} cy={60} r={54} fill={t.gold} stroke="#111" strokeWidth={8} />
-    <g transform="translate(58 55) scale(0.7)">
-      <path d="M-26 -22 C-26 -58 30 -58 30 -22 C30 4 2 6 2 30" fill="none" stroke={t.accent} strokeWidth={24} strokeLinecap="round" />
-      <circle cx={2} cy={52} r={14} fill={t.accent} />
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width={size} height={size} aria-hidden="true" className="logo-mark">
+    <Defs />
+    <clipPath id="logo-disc">
+      <circle cx={60} cy={60} r={52} />
+    </clipPath>
+    <circle cx={60} cy={60} r={54} fill={t.gold} />
+    {/* head centre sits at y=-386 in Mascot's own coordinates */}
+    <g clipPath="url(#logo-disc)">
+      <g transform="translate(60 64) scale(0.3) translate(0 386)">
+        <Mascot />
+      </g>
     </g>
+    <circle cx={60} cy={60} r={54} fill="none" stroke="#111" strokeWidth={8} />
   </svg>
 );

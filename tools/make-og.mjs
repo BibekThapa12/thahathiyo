@@ -79,11 +79,13 @@ for (const v of videos) {
   );
 }
 
-// App icons from the logo mark.
+// App icons from the built tab icon (थाहा's face, src/pages/favicon.svg.ts); run `npm run build` first.
+const face = fs.readFileSync(path.join(root, "dist/favicon.svg"), "utf8");
+const faceAt = (s) => face.replace('width="120" height="120"', `width="${s}" height="${s}"`);
 for (const [name, size] of [["favicon-32.png", 32], ["apple-touch-icon.png", 180], ["icon-192.png", 192], ["icon-512.png", 512]]) {
   const p = await browser.newPage({ viewport: { width: size, height: size } });
   const pad = name.startsWith("apple") || name.startsWith("icon") ? `background:#1F2A6B;` : "";
-  await p.setContent(`<body style="margin:0;${pad}display:grid;place-items:center;width:${size}px;height:${size}px">${logo(pad ? Math.round(size * 0.82) : size)}</body>`);
+  await p.setContent(`<body style="margin:0;${pad}display:grid;place-items:center;width:${size}px;height:${size}px">${faceAt(pad ? Math.round(size * 0.82) : size)}</body>`);
   await p.screenshot({ path: path.join(root, "public", name), omitBackground: !pad });
   await p.close();
   console.log("wrote public/" + name);
