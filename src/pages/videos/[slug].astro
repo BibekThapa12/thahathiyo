@@ -6,8 +6,9 @@ import SocialIcon from "../../components/SocialIcon.astro";
 import FollowButtons from "../../components/FollowButtons.astro";
 import T from "../../components/T.astro";
 import SupportCard from "../../components/SupportCard.astro";
+import WatchOn from "../../components/WatchOn.astro";
 import { MascotBurst, VideoArt } from "../../components/art/scenes";
-import { getVideos, ogImageFor, platformLinks, relatedTo, topicOf, type Video } from "../../lib/videos";
+import { getVideos, ogImageFor, relatedTo, topicOf, type Video } from "../../lib/videos";
 import { SOCIALS } from "../../data/site";
 import { dateEn, dateNe, daysBetween, ne, todayNepal } from "../../lib/format";
 import festivals from "../../data/festivals.json";
@@ -20,8 +21,7 @@ export async function getStaticPaths() {
 interface Props { video: Video; all: Video[] }
 const { video: v, all } = Astro.props;
 const topic = topicOf(v.topic);
-const related = relatedTo(v, all);
-const links = platformLinks(v);
+const related = relatedTo(v, all, 6);
 const soon = v.status === "coming-soon";
 // A coming-soon festival video is expected on the festival day (festivals.json links them by slug).
 const fest = festivals.festivals.find((f) => (f as { video?: string }).video === v.slug);
@@ -81,32 +81,21 @@ const crumbs = {
             <p class="soon-tag"><T {...soonTag} />{fest && daysLeft >= 0 && <small><T ne={dateNe(fest.date)} en={dateEn(fest.date)} /></small>}</p>
           </div>
         )}
-        <div class="quick-follow">
-          <div class="qf-art" aria-hidden="true"><MascotBurst mood="point" /></div>
-          <a class="btn youtube" href={subscribeUrl} target="_blank" rel="noopener me">
-            <SocialIcon id="youtube" />
-            <span><T ne="युट्युबमा फलो गर्नुहोस्" en="Follow on YouTube" mix="YouTube मा Follow गर्नुस्" /></span>
-          </a>
-        </div>
+        <a class="btn youtube follow-yt" href={subscribeUrl} target="_blank" rel="noopener me">
+          <SocialIcon id="youtube" />
+          <span><T ne="युट्युबमा फलो गर्नुहोस्" en="Follow on YouTube" mix="YouTube मा Follow गर्नुस्" /></span>
+        </a>
         {soon && latest && (
           <a class="meanwhile" href={u(`videos/${latest.slug}/`)}><T ne="यसबीचमा हेर्नुहोस्:" en="Meanwhile, watch:" mix="Meanwhile यो हेर्नुस्:" /> <strong>{latest.titleNe || latest.titleEn}</strong> <span aria-hidden="true">→</span></a>
         )}
-        {links.length > 0 && (
-          <div class="watch-on">
-            <p><T ne="यो भिडियो आफ्नो एपमा हेर्नुहोस्:" en="Watch this video on your app:" mix="यो video आफ्नो app मा हेर्नुस्:" /></p>
-            <ul>
-              {links.map((l) => (
-                <li><a class={`wo ${l.id}`} href={l.url} target="_blank" rel="noopener"><SocialIcon id={l.id} /><T ne={l.nameNe} en={l.name} mix={l.name} /></a></li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <div class="watch"><WatchOn video={v} /></div>
       </div>
       <div class="info">
         <p class="meta">
-          <span class="num"><T ne={`#${ne(v.number)}`} en={`#${v.number}`} /></span>
-          <a class={`chip ${v.topic}`} href={u(`#topic-${v.topic}`)}><T ne={topic.ne} en={topic.en} mix={topic.mix} /></a>
-          {v.date && <time datetime={v.date}><T ne={dateNe(v.date)} en={dateEn(v.date)} /></time>}
+          <strong><T ne={`#${ne(v.number)}`} en={`#${v.number}`} /></strong>
+          <span aria-hidden="true">·</span>
+          <a href={u(`#topic-${v.topic}`)}><T ne={topic.ne} en={topic.en} mix={topic.mix} /></a>
+          {v.date && <><span aria-hidden="true">·</span><time datetime={v.date}><T ne={dateNe(v.date)} en={dateEn(v.date)} /></time></>}
         </p>
         <h1>{v.titleNe || v.titleEn}</h1>
         {(v.description || v.descriptionEn) && <p class="lead">{v.description || v.descriptionEn}</p>}
@@ -139,6 +128,10 @@ const crumbs = {
           </section>
         )}
 
+      </div>
+    </div>
+
+    <div class="closing">
         <section class="ask band" aria-labelledby="ask-h">
           <div class="ask-art"><MascotBurst mood="point" label="थाहा फलो बटनतिर देखाउँदै" /></div>
           <div class="bubble">
@@ -150,14 +143,13 @@ const crumbs = {
           </div>
           <div class="ask-btns"><FollowButtons label="Follow @thahathiyo" /></div>
         </section>
-        <div class="support"><SupportCard /></div>
-      </div>
+        <SupportCard />
     </div>
 
     {related.length > 0 && (
       <section class="related" aria-labelledby="rel-h">
         <h2 id="rel-h"><T ne="अरू भिडियो" en="More videos" mix="अरू Videos" /></h2>
-        <div class="grid">{related.map((r) => <VideoCard video={r} />)}</div>
+        <ul class="vgrid">{related.map((r) => <li><VideoCard video={r} /></li>)}</ul>
       </section>
     )}
   </article>
@@ -186,20 +178,14 @@ const crumbs = {
       top: 110px;
     }
   }
-  /* phone: follow right where the video ends */
-  .quick-follow {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  /* under the player: one follow button, then the same video on the other apps */
+  .follow-yt,
+  .watch {
     max-width: 380px;
     margin: 14px auto 0;
   }
-  .qf-art {
-    width: 56px;
-    flex: none;
-  }
-  .quick-follow .btn {
-    flex: 1;
+  .follow-yt {
+    display: flex;
     justify-content: center;
   }
   .meanwhile {
@@ -268,15 +254,17 @@ const crumbs = {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 10px;
-    font-size: 0.9rem;
+    gap: 2px 8px;
+    margin: 0 0 6px;
+    font-size: 0.95rem;
   }
-  .num {
-    background: var(--gold);
-    border: 2px solid var(--ink);
-    border-radius: 10px;
-    padding: 0 10px;
-    font-weight: 800;
+  .meta strong {
+    color: var(--vermilion-2);
+  }
+  .meta a {
+    display: inline-block;
+    padding: 11px 0;
+    font-weight: 700;
   }
   h1 {
     font-size: clamp(1.8rem, 5vw, 2.8rem);
@@ -294,58 +282,7 @@ const crumbs = {
     font-size: 0.85rem;
     opacity: 0.8;
   }
-  .support {
-    margin-top: 28px;
-  }
-  /* watch-on: outlined pills (solid platform buttons always mean follow) */
-  .watch-on {
-    max-width: 380px;
-    margin: 14px auto 0;
-  }
-  .watch-on p {
-    margin: 0 0 8px;
-    font-weight: 700;
-    font-size: 0.95rem;
-  }
-  .watch-on ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-  }
-  .wo {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    min-height: 44px;
-    padding: 0 12px;
-    background: #fffaf0;
-    border: 2px solid var(--ink);
-    border-radius: 999px;
-    font-weight: 800;
-    font-size: 0.92rem;
-    text-decoration: none;
-    transition: background-color 150ms ease, transform 120ms var(--ease-out);
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .wo:hover {
-      background: var(--gold);
-    }
-  }
-  .wo:active {
-    transform: scale(0.97);
-  }
-  .wo :global(.ico) {
-    width: 22px;
-    height: 22px;
-    flex: none;
-  }
-  .wo.youtube :global(.ico) { color: var(--vermilion); }
-  .wo.tiktok :global(.ico) { color: var(--ink); }
-  .wo.instagram :global(.ico) { color: #c13584; }
-  .wo.facebook :global(.ico) { color: var(--indigo-2); }
+  /* watch-on pills: WatchOn.astro */
   /* desktop: shrink the player so the follow row fits in the first screen */
   @media (min-width: 860px) {
     .player :global(.lite-yt),
@@ -353,11 +290,24 @@ const crumbs = {
       max-width: min(380px, calc((100svh - 300px) * 9 / 16));
     }
   }
-  /* थाहा asks for the follow in a speech bubble */
+  /* closing row: थाहा's follow ask and the tea card, side by side, same height, on the wrap's edges */
+  .closing {
+    display: grid;
+    gap: 24px;
+    margin-top: 56px;
+  }
+  .closing > :global(*) {
+    max-width: none;
+  }
+  @media (min-width: 900px) {
+    .closing {
+      grid-template-columns: 1fr 1fr;
+      align-items: stretch;
+    }
+  }
   .ask {
-    margin-top: 40px;
-    max-width: 760px;
-    padding: 18px 16px 20px;
+    align-content: center;
+    padding: 22px 18px;
     border: var(--line) solid var(--ink);
     border-radius: var(--radius);
     box-shadow: var(--shadow);

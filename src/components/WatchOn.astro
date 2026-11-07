@@ -1,0 +1,67 @@
+---
+// "Watch this video on your app": outlined pills to this exact video on each platform.
+// Outlined on purpose: solid platform buttons always mean "follow".
+import type { Video } from "../lib/videos";
+import { platformLinks } from "../lib/videos";
+import SocialIcon from "./SocialIcon.astro";
+import T from "./T.astro";
+interface Props { video: Video }
+const links = platformLinks(Astro.props.video);
+---
+{links.length > 0 && (
+  <div class="watch-on">
+    <p><T ne="यो भिडियो आफ्नो एपमा हेर्नुहोस्:" en="Watch this video on your app:" mix="यो video आफ्नो app मा हेर्नुस्:" /></p>
+    <ul>
+      {links.map((l) => (
+        <li><a class={`wo ${l.id}`} href={l.url} target="_blank" rel="noopener"><SocialIcon id={l.id} /><T ne={l.nameNe} en={l.name} mix={l.name} /></a></li>
+      ))}
+    </ul>
+  </div>
+)}
+<style>
+  .watch-on p {
+    margin: 0 0 8px;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  .watch-on ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .wo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 12px;
+    background: #fffaf0;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 0.92rem;
+    text-decoration: none;
+    color: var(--ink);
+    transition: background-color 150ms ease, transform 120ms var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .wo:hover {
+      background: var(--gold);
+    }
+  }
+  .wo:active {
+    transform: scale(0.97);
+  }
+  .wo :global(.ico) {
+    width: 22px;
+    height: 22px;
+    flex: none;
+  }
+  .wo.youtube :global(.ico) { color: var(--vermilion); }
+  .wo.tiktok :global(.ico) { color: var(--ink); }
+  .wo.instagram :global(.ico) { color: #c13584; }
+  .wo.facebook :global(.ico) { color: var(--indigo-2); }
+</style>

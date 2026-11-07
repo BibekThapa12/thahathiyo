@@ -8,6 +8,7 @@ import TopicChips from "../components/TopicChips.astro";
 import T from "../components/T.astro";
 import TeaCup from "../components/TeaCup.astro";
 import SupportCard from "../components/SupportCard.astro";
+import WatchOn from "../components/WatchOn.astro";
 import { getVideos, topicOf } from "../lib/videos";
 import { CHANNEL } from "../data/site";
 import { dateEn, dateNe, ne } from "../lib/format";
@@ -16,6 +17,7 @@ import { u } from "../lib/url";
 const videos = await getVideos();
 const published = videos.filter((v) => v.status === "published");
 const latest = published.find((v) => v.youtubeId);
+const rest = videos.filter((v) => v !== latest);
 ---
 <Base
   title="थाहा थियो? | Thaha Thiyo — नेपालीमा रोचक तथ्य · Facts in Nepali"
@@ -36,26 +38,26 @@ const latest = published.find((v) => v.youtubeId);
     <div class="tri flip"></div>
   </section>
 
-  {latest && (
-    <section class="section latest" aria-labelledby="latest-h">
-      <div class="wrap latest-grid">
-        <LiteYouTube id={latest.youtubeId} title={latest.titleNe} art={latest.art} eager />
-        <div class="latest-copy">
-          <p class="latest-meta"><strong><T ne="नयाँ भिडियो" en="New video" mix="Fresh video" /></strong> · <T ne={`#${ne(latest.number)}${latest.date ? ` · ${dateNe(latest.date)}` : ""} · ${topicOf(latest.topic).ne}`} en={`#${latest.number}${latest.date ? ` · ${dateEn(latest.date)}` : ""} · ${topicOf(latest.topic).en}`} mix={`#${ne(latest.number)}${latest.date ? ` · ${dateNe(latest.date)}` : ""} · ${topicOf(latest.topic).mix}`} /></p>
-          <h2 id="latest-h">{latest.titleNe || latest.titleEn}</h2>
-          {(latest.description || latest.descriptionEn) && <p class="latest-desc">{latest.description || latest.descriptionEn}</p>}
-          <a class="btn" href={u(`videos/${latest.slug}/`)}><T ne="तथ्य र स्रोत हेर्नुहोस् →" en="Facts & sources →" mix="Facts र sources हेर्नुस् →" /></a>
-        </div>
-      </div>
-    </section>
-  )}
-
   <section class="section" id="videos" aria-labelledby="videos-h">
     <div class="wrap">
-      <h2 id="videos-h"><T ne="सबै भिडियो" en="All videos" mix="सबै Videos" /></h2>
-      <TopicChips />
+      <div class="vhead">
+        <h2 id="videos-h"><T ne="भिडियो" en="Videos" mix="Videos" /></h2>
+        <TopicChips />
+      </div>
+      {latest && (
+        <article class="feature" data-topic-item={latest.topic} aria-labelledby="latest-h">
+          <LiteYouTube id={latest.youtubeId} title={latest.titleNe} art={latest.art} eager />
+          <div class="feature-copy">
+          <p class="latest-meta"><strong><T ne="नयाँ भिडियो" en="New video" mix="Fresh video" /></strong> · <T ne={`#${ne(latest.number)}${latest.date ? ` · ${dateNe(latest.date)}` : ""} · ${topicOf(latest.topic).ne}`} en={`#${latest.number}${latest.date ? ` · ${dateEn(latest.date)}` : ""} · ${topicOf(latest.topic).en}`} mix={`#${ne(latest.number)}${latest.date ? ` · ${dateNe(latest.date)}` : ""} · ${topicOf(latest.topic).mix}`} /></p>
+            <h3 id="latest-h">{latest.titleNe || latest.titleEn}</h3>
+            {(latest.description || latest.descriptionEn) && <p class="latest-desc">{latest.description || latest.descriptionEn}</p>}
+            <WatchOn video={latest} />
+            <a class="btn" href={u(`videos/${latest.slug}/`)}><T ne="तथ्य र स्रोत हेर्नुहोस् →" en="Facts & sources →" mix="Facts र sources हेर्नुस् →" /></a>
+          </div>
+        </article>
+      )}
       {videos.length ? (
-        <ul class="vgrid">{videos.map((v) => <li data-topic-item={v.topic}><VideoCard video={v} /></li>)}</ul>
+        <ul class="vgrid">{rest.map((v) => <li data-topic-item={v.topic}><VideoCard video={v} /></li>)}</ul>
       ) : (
         <div class="empty card"><MascotBurst mood="wonder" /><p><T ne="भिडियो छिट्टै आउँदैछन्!" en="Videos coming soon!" mix="Videos छिट्टै आउँदैछन्!" /></p></div>
       )}
@@ -173,9 +175,28 @@ const latest = published.find((v) => v.youtubeId);
       order: -1;
     }
   }
-  .latest-grid {
+  /* one video section: heading + filter, the newest video featured, then the rest */
+  .vhead {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 24px;
+    margin-bottom: 28px;
+  }
+  .vhead h2 {
+    margin: 0;
+  }
+  .feature {
     display: grid;
     gap: 20px;
+    padding-bottom: 36px;
+    margin-bottom: 36px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .feature h3 {
+    font-size: clamp(1.5rem, 3.2vw, 2.3rem);
+    margin: 0 0 10px;
   }
   .latest-meta {
     margin: 0 0 6px;
@@ -186,42 +207,21 @@ const latest = published.find((v) => v.youtubeId);
   }
   .latest-desc {
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     max-width: 60ch;
+    margin-bottom: 18px;
   }
-  @media (min-width: 800px) {
-    .latest-grid {
-      grid-template-columns: 300px 1fr;
-      align-items: start;
-      gap: 40px;
-    }
-    .latest-copy {
-      padding-top: 12px;
-    }
-  }
-  #videos :global(.chips) {
+  .feature-copy :global(.watch-on) {
+    max-width: 460px;
     margin-bottom: 20px;
   }
-  /* every video, filtered in place by the topic chips */
-  .vgrid {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 22px 14px;
-  }
-  @media (min-width: 720px) {
-    .vgrid {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 28px 20px;
-    }
-  }
-  @media (min-width: 1040px) {
-    .vgrid {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
+  @media (min-width: 800px) {
+    .feature {
+      grid-template-columns: 300px 1fr;
+      align-items: center;
+      gap: 48px;
     }
   }
   .about {
@@ -275,6 +275,10 @@ const latest = published.find((v) => v.youtubeId);
   }
   .support-sec {
     padding-top: 8px;
+  }
+  /* full content width so both edges sit on the page lines */
+  .support-sec :global(.tea) {
+    max-width: none;
   }
   .empty {
     padding: 20px;
