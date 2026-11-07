@@ -1,0 +1,799 @@
+---
+// Video editor for the channel owner: edits src/data/videos.json on GitHub (each save is a commit,
+// Vercel redeploys). No server: the browser talks to the GitHub API with the owner's own token.
+import "../styles/global.css";
+import SocialIcon from "../components/SocialIcon.astro";
+import { TOPICS, type Platform } from "../data/site";
+import { u } from "../lib/url";
+
+const LINKS: { id: Platform; key: string; name: string; eg: string }[] = [
+  { id: "youtube", key: "youtubeId", name: "YouTube", eg: "https://youtube.com/shorts/…" },
+  { id: "tiktok", key: "tiktokUrl", name: "TikTok", eg: "https://www.tiktok.com/@thahathiyo/video/…" },
+  { id: "instagram", key: "instagramUrl", name: "Instagram", eg: "https://www.instagram.com/reel/…" },
+  { id: "facebook", key: "facebookUrl", name: "Facebook", eg: "https://www.facebook.com/reel/…" },
+];
+const ARTS = ["mascot", "crow", "dog", "diya", "lake", "flag", "calendar", "cans"];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Edit videos | थाहा थियो?</title>
+    <link rel="icon" href={u("favicon-32.png")} type="image/png" />
+  </head>
+  <body>
+    <header class="top">
+      <a class="brand" href={u("")}>थाहा थियो? <span>videos</span></a>
+      <button class="link-btn" id="signout" type="button" hidden>Sign out</button>
+    </header>
+
+    <main class="wrap">
+      <!-- 1. sign in -->
+      <section id="signin" hidden>
+        <h1>Sign in to edit your videos</h1>
+        <p class="lead">You need a GitHub key once. Your browser remembers it after that.</p>
+        <ol class="steps">
+          <li><a class="btn ghost" id="make-key" href="https://github.com/settings/personal-access-tokens/new?name=Thaha+Thiyo+admin&contents=write" target="_blank" rel="noopener">Create a key on GitHub ↗</a></li>
+          <li>On that page, under <b>Repository access</b>, choose <b>Only select repositories</b> → <b>thahathiyo</b>. Then press <b>Generate token</b> and copy it.</li>
+          <li>
+            <form id="signin-form" class="row">
+              <label class="sr" for="token">GitHub key</label>
+              <input id="token" type="password" autocomplete="off" placeholder="Paste the key here" required />
+              <button class="btn" type="submit">Sign in</button>
+            </form>
+          </li>
+        </ol>
+        <p class="msg" id="signin-msg" role="alert"></p>
+      </section>
+
+      <!-- 2. list -->
+      <section id="list" hidden>
+        <div class="list-head">
+          <h1>Your videos</h1>
+          <button class="btn" id="add" type="button">+ Add a video</button>
+        </div>
+        <p class="msg" id="list-msg" role="status"></p>
+        <ul class="videos" id="videos"></ul>
+      </section>
+
+      <!-- 3. edit -->
+      <section id="edit" hidden>
+        <button class="link-btn back" id="back" type="button">← All videos</button>
+        <h1 id="edit-h">New video</h1>
+        <form id="form" novalidate>
+          <fieldset>
+            <legend>About the video</legend>
+            <label>Title<input name="titleEn" required placeholder="Same as on YouTube" /></label>
+            <div class="two">
+              <label>Video number<input name="number" type="number" min="1" required /></label>
+              <label>Upload date<input name="date" type="date" /></label>
+            </div>
+            <div class="label">Topic</div>
+            <div class="chips" role="radiogroup" aria-label="Topic">
+              {TOPICS.map((t) => <label class="topic"><input type="radio" name="topic" value={t.id} required /><span>{t.en}</span></label>)}
+            </div>
+            <label>Description<textarea name="descriptionEn" rows="5" placeholder="One or two sentences about the video"></textarea></label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Where to watch it</legend>
+            <p class="hint">Paste each app's link. Leave YouTube empty until it's uploaded: the site shows “Coming soon”.</p>
+            {LINKS.map((l) => (
+              <label class="link-field">
+                <span class={`ico-wrap ${l.id}`}><SocialIcon id={l.id} /></span>
+                <span class="sr">{l.name} link</span>
+                <input name={l.key} type="url" inputmode="url" placeholder={l.eg} />
+              </label>
+            ))}
+          </fieldset>
+
+          <fieldset>
+            <legend>Facts</legend>
+            <ol class="rows" id="facts"></ol>
+            <button class="btn ghost small" id="add-fact" type="button">+ Add a fact</button>
+          </fieldset>
+
+          <fieldset>
+            <legend>Sources</legend>
+            <ol class="rows" id="sources"></ol>
+            <button class="btn ghost small" id="add-source" type="button">+ Add a source</button>
+          </fieldset>
+
+          <details class="more">
+            <summary>More options</summary>
+            <label>Nepali title<input name="titleNe" /></label>
+            <label>Nepali description<textarea name="description" rows="3"></textarea></label>
+            <label>Page address<input name="slug" placeholder="made from the title" /></label>
+            <p class="hint">Don't change the page address after a video is live: old links would stop working.</p>
+            <label>Picture if the thumbnail can't load
+              <select name="art"><option value="">Mascot (default)</option>{ARTS.slice(1).map((a) => <option value={a}>{a}</option>)}</select>
+            </label>
+            <label>Title keywords<input name="matchTitle" placeholder="e.g. Tihar, Kag" /></label>
+            <p class="hint">Only for “Coming soon” videos: words from the future YouTube title, comma-separated, so the upload links up by itself.</p>
+          </details>
+
+          <div class="savebar">
+            <button class="btn" id="save" type="submit">Save</button>
+            <p class="msg" id="save-msg" role="status"></p>
+            <button class="link-btn danger" id="delete" type="button" hidden>Delete video</button>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    {LINKS.map((l) => <template id={`ico-${l.id}`}><SocialIcon id={l.id} /></template>)}
+  </body>
+</html>
+
+<script>
+  import { dateEn, todayNepal } from "../lib/format";
+
+  type Entry = Record<string, any> & { slug: string; number: number; titleEn: string };
+  const REPO = "BibekThapa12/thahathiyo";
+  const FILE = "src/data/videos.json";
+  const API = `https://api.github.com/repos/${REPO}/contents/${FILE}`;
+  const KEY = "thaha-admin-token";
+  const PLATFORMS = [["youtube", "youtubeId"], ["tiktok", "tiktokUrl"], ["instagram", "instagramUrl"], ["facebook", "facebookUrl"]] as const;
+
+  const $ = <T extends HTMLElement = HTMLElement>(s: string) => document.querySelector(s) as T;
+  const form = $<HTMLFormElement>("#form");
+  let token = "";
+  let videos: Entry[] = [];
+  let editing: Entry | null = null; // null = new video
+  let dirty = false;
+
+  const store = {
+    get: () => { try { return localStorage.getItem(KEY) ?? ""; } catch { return ""; } },
+    set: (v: string) => { try { v ? localStorage.setItem(KEY, v) : localStorage.removeItem(KEY); } catch {} },
+  };
+  const ytId = (s = "") => s.match(/(?:shorts\/|v=|youtu\.be\/|embed\/)([\w-]{11})/)?.[1] ?? s.trim();
+  const slugify = (s: string) => s.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
+  const b64 = {
+    decode: (s: string) => new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\n/g, "")), (c) => c.charCodeAt(0))),
+    encode: (s: string) => { let bin = ""; new TextEncoder().encode(s).forEach((b) => (bin += String.fromCharCode(b))); return btoa(bin); },
+  };
+
+  function show(id: "signin" | "list" | "edit") {
+    for (const s of ["signin", "list", "edit"]) $("#" + s).hidden = s !== id;
+    $("#signout").hidden = id === "signin";
+    scrollTo(0, 0);
+  }
+  function el<K extends keyof HTMLElementTagNameMap>(tag: K, props: Record<string, any> = {}, ...kids: (Node | string)[]) {
+    const n = Object.assign(document.createElement(tag), props);
+    n.append(...kids);
+    return n;
+  }
+
+  // ---- GitHub ----
+  class GhError extends Error {}
+  async function gh(init?: RequestInit) {
+    const res = await fetch(API + (init ? "" : "?ref=main"), {
+      ...init,
+      cache: "no-store",
+      headers: { Authorization: `Bearer ${token}`, Accept: "application/vnd.github+json", ...(init?.headers ?? {}) },
+    });
+    if (res.status === 401) throw new GhError("That key didn't work. It may be mistyped or expired: create a new one with step 1.");
+    if (res.status === 403 || res.status === 404) throw new GhError("The key can't open the thahathiyo repository. On GitHub, edit the key: give it access to thahathiyo with Contents set to “Read and write”.");
+    if (res.status === 409 || res.status === 422) throw Object.assign(new GhError("conflict"), { conflict: true });
+    if (!res.ok) throw new GhError(`GitHub said “${res.status} ${res.statusText}”. Try again in a minute.`);
+    return res.json();
+  }
+  async function load(): Promise<{ list: Entry[]; sha: string }> {
+    const j = await gh();
+    return { list: JSON.parse(b64.decode(j.content)), sha: j.sha };
+  }
+  // Re-reads the file right before writing, so a commit made meanwhile (e.g. the daily YouTube save) isn't lost.
+  async function commit(change: (list: Entry[]) => Entry[], message: string) {
+    for (let attempt = 0; ; attempt++) {
+      const { list, sha } = await load();
+      const next = change(list).sort((a, b) => a.number - b.number);
+      try {
+        await gh({ method: "PUT", body: JSON.stringify({ message, sha, branch: "main", content: b64.encode(JSON.stringify(next, null, 2) + "\n") }) });
+        videos = next;
+        return;
+      } catch (e: any) {
+        if (!e.conflict || attempt) throw e;
+      }
+    }
+  }
+
+  // ---- sign in ----
+  async function start() {
+    token = store.get();
+    if (!token) return show("signin");
+    $("#list-msg").textContent = "Loading…";
+    show("list");
+    try {
+      videos = (await load()).list;
+      $("#list-msg").textContent = "";
+      renderList();
+    } catch (e: any) {
+      store.set("");
+      token = "";
+      show("signin");
+      $("#signin-msg").textContent = e.message;
+    }
+  }
+  $("#signin-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    store.set($<HTMLInputElement>("#token").value.trim());
+    $("#signin-msg").textContent = "";
+    start();
+  });
+  $("#signout").addEventListener("click", () => {
+    if (dirty && !confirm("You have unsaved changes. Sign out anyway?")) return;
+    dirty = false;
+    store.set("");
+    $<HTMLInputElement>("#token").value = "";
+    show("signin");
+  });
+
+  // ---- list ----
+  function renderList() {
+    const ul = $("#videos");
+    ul.replaceChildren();
+    for (const v of [...videos].sort((a, b) => b.number - a.number)) {
+      const id = ytId(v.youtubeId);
+      const thumb = el("span", { className: "thumb" });
+      if (id) thumb.append(el("img", { src: `https://i.ytimg.com/vi/${id}/oar2.jpg`, alt: "", loading: "lazy", onerror: function (this: HTMLImageElement) { this.remove(); } }));
+      const apps = el("span", { className: "apps" });
+      const missing: string[] = [];
+      for (const [p, k] of PLATFORMS) {
+        const has = !!v[k]?.trim();
+        if (!has) missing.push(p[0].toUpperCase() + p.slice(1));
+        const icon = ($<HTMLTemplateElement>(`#ico-${p}`).content.cloneNode(true) as DocumentFragment);
+        apps.append(el("span", { className: `app ${p}${has ? "" : " off"}` }, icon));
+      }
+      const facts = v.facts?.length ?? 0, sources = v.sources?.length ?? 0;
+      const status = !id ? "Coming soon" : missing.length ? `Missing: ${missing.join(", ")}` : "All links added";
+      const btn = el("button", { type: "button", className: "vrow" },
+        thumb,
+        el("span", { className: "vtext" },
+          el("span", { className: "vmeta" }, `#${v.number}${v.date ? " · " + dateEn(v.date) : ""}`),
+          el("span", { className: "vtitle" }, v.titleEn || v.titleNe || "Untitled"),
+          el("span", { className: `vstatus${!id || missing.length ? " warn" : ""}` }, `${status} · ${facts} fact${facts === 1 ? "" : "s"} · ${sources} source${sources === 1 ? "" : "s"}`),
+        ),
+        apps,
+      );
+      btn.addEventListener("click", () => openEditor(v));
+      ul.append(el("li", {}, btn));
+    }
+  }
+  $("#add").addEventListener("click", () => openEditor(null));
+
+  // ---- editor ----
+  const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement | null;
+
+  function factRow(f: { en: string; ne?: string } = { en: "" }) {
+    const ta = el("textarea", { rows: 2, value: f.en, placeholder: "One fact from the video", ariaLabel: "Fact" });
+    const li = el("li", { className: "rowitem" }, ta, removeBtn("Remove fact"));
+    (li as any).ne = f.ne ?? ""; // keeps the Nepali version of an existing fact
+    return li;
+  }
+  function sourceRow(s: { title: string; url: string } = { title: "", url: "" }) {
+    return el("li", { className: "rowitem source" },
+      el("input", { value: s.title, placeholder: "Source name, e.g. Britannica", ariaLabel: "Source name" }),
+      el("input", { value: s.url, type: "url", placeholder: "https://…", ariaLabel: "Source link" }),
+      removeBtn("Remove source"));
+  }
+  function removeBtn(label: string) {
+    const b = el("button", { type: "button", className: "x", ariaLabel: label, title: label }, "×");
+    b.addEventListener("click", () => { b.closest("li")?.remove(); dirty = true; });
+    return b;
+  }
+  $("#add-fact").addEventListener("click", () => { const r = factRow(); $("#facts").append(r); r.querySelector("textarea")!.focus(); });
+  $("#add-source").addEventListener("click", () => { const r = sourceRow(); $("#sources").append(r); r.querySelector("input")!.focus(); });
+
+  function openEditor(v: Entry | null) {
+    editing = v;
+    form.reset();
+    const d: Entry = v ?? ({ number: Math.max(0, ...videos.map((x) => x.number)) + 1, date: todayNepal(), titleEn: "", slug: "" } as Entry);
+    for (const k of ["titleEn", "titleNe", "number", "date", "descriptionEn", "description", "slug", "art", "tiktokUrl", "instagramUrl", "facebookUrl"]) {
+      const f = field(k);
+      if (f) f.value = d[k] ?? "";
+    }
+    field("youtubeId")!.value = d.youtubeId ? `https://youtube.com/shorts/${d.youtubeId}` : "";
+    field("matchTitle")!.value = (d.matchTitle ?? []).join(", ");
+    form.querySelectorAll<HTMLInputElement>("input[name=topic]").forEach((r) => (r.checked = r.value === d.topic));
+    $("#facts").replaceChildren(...(d.facts ?? []).map(factRow));
+    $("#sources").replaceChildren(...(d.sources ?? []).map(sourceRow));
+    $("#edit-h").textContent = v ? `Edit video #${v.number}` : "New video";
+    $("#delete").hidden = !v;
+    $("#save-msg").textContent = "";
+    (form.querySelector("details") as HTMLDetailsElement).open = false;
+    dirty = false;
+    show("edit");
+  }
+  form.addEventListener("input", () => (dirty = true));
+  $("#back").addEventListener("click", () => {
+    if (dirty && !confirm("You have unsaved changes. Leave without saving?")) return;
+    dirty = false;
+    renderList();
+    show("list");
+  });
+  addEventListener("beforeunload", (e) => { if (dirty) e.preventDefault(); });
+
+  function readForm(): Entry | string {
+    const val = (k: string) => field(k)?.value.trim() ?? "";
+    const titleEn = val("titleEn");
+    const number = Number(val("number"));
+    const topic = (form.querySelector("input[name=topic]:checked") as HTMLInputElement | null)?.value;
+    if (!titleEn) return "Add a title.";
+    if (!Number.isInteger(number) || number < 1) return "Add a video number (1, 2, 3…).";
+    if (!topic) return "Pick a topic.";
+    const taken = videos.some((x) => x !== editing && x.number === number);
+    if (taken) return `Video #${number} already exists. Use another number.`;
+    const sources = [...$("#sources").children].map((li) => {
+      const [t, l] = li.querySelectorAll("input");
+      return { title: t.value.trim(), url: l.value.trim() };
+    }).filter((s) => s.title || s.url);
+    if (sources.some((s) => !s.title || !/^https?:\/\//.test(s.url))) return "Each source needs a name and a link starting with https://";
+    let slug = val("slug") || slugify(titleEn) || `video-${number}`;
+    if (videos.some((x) => x !== editing && x.slug === slug)) slug = `${slug}-${number}`;
+    const keywords = val("matchTitle").split(",").map((s) => s.trim()).filter(Boolean);
+    const next: Entry = {
+      ...(editing ?? {}), // keeps any field this form doesn't show
+      slug, number, titleNe: val("titleNe"), titleEn, date: val("date"), topic,
+      youtubeId: ytId(val("youtubeId")), tiktokUrl: val("tiktokUrl"), instagramUrl: val("instagramUrl"), facebookUrl: val("facebookUrl"),
+      description: val("description"), descriptionEn: val("descriptionEn"),
+      facts: [...$("#facts").children].map((li) => ({ ne: (li as any).ne ?? "", en: li.querySelector("textarea")!.value.trim() })).filter((f) => f.en || f.ne),
+      sources,
+    };
+    if (val("art")) next.art = val("art"); else delete next.art;
+    if (keywords.length) next.matchTitle = keywords; else delete next.matchTitle;
+    return next;
+  }
+
+  async function run(work: () => Promise<void>, done: string) {
+    const btn = $<HTMLButtonElement>("#save"), msg = $("#save-msg");
+    btn.disabled = true;
+    msg.className = "msg";
+    msg.textContent = "Saving…";
+    try {
+      await work();
+      dirty = false;
+      renderList();
+      show("list");
+      $("#list-msg").textContent = done;
+    } catch (e: any) {
+      msg.className = "msg err";
+      msg.textContent = e.conflict ? "Someone else saved at the same moment. Press Save again." : e instanceof GhError ? e.message : "Couldn't reach GitHub. Check your internet and press Save again.";
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const next = readForm();
+    if (typeof next === "string") {
+      $("#save-msg").className = "msg err";
+      $("#save-msg").textContent = next;
+      return;
+    }
+    const was = editing;
+    run(() => commit((list) => {
+      const i = was ? list.findIndex((x) => x.slug === was.slug) : -1;
+      if (i >= 0) list[i] = next; else list.push(next);
+      return list;
+    }, `${was ? "Update" : "Add"} video #${next.number}: ${next.titleEn}`),
+    `Saved “${next.titleEn}”. It's live on the site in about a minute.`);
+  });
+
+  $("#delete").addEventListener("click", () => {
+    const v = editing;
+    if (!v || !confirm(`Delete “${v.titleEn}” from the website?\n\nIt disappears from the site in about a minute. GitHub keeps the old version in its history.`)) return;
+    run(() => commit((list) => list.filter((x) => x.slug !== v.slug), `Delete video #${v.number}: ${v.titleEn}`), `Deleted “${v.titleEn}”.`);
+  });
+
+  start();
+</script>
+
+<style is:global>
+  /* global: the list and fact/source rows are built by the script, which scoped styles would miss */
+  body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 1.05rem;
+    line-height: 1.5;
+  }
+  [hidden] {
+    display: none !important;
+  }
+  .sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: var(--indigo);
+    color: #fff;
+    border-bottom: 3px solid var(--ink);
+  }
+  .brand {
+    color: var(--gold);
+    font-weight: 800;
+    font-size: 1.25rem;
+    text-decoration: none;
+  }
+  .brand span {
+    color: #fff;
+    font-weight: 500;
+  }
+  .top .link-btn {
+    color: #fff;
+  }
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 28px 16px 120px;
+  }
+  h1 {
+    font-size: 1.9rem;
+    line-height: 1.15;
+    margin: 0 0 8px;
+  }
+  .lead {
+    margin: 0 0 20px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 22px;
+    font: inherit;
+    font-weight: 800;
+    color: var(--ink);
+    background: var(--gold);
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    box-shadow: 3px 3px 0 var(--ink);
+    text-decoration: none;
+    cursor: var(--cursor-link);
+    transition: transform 120ms var(--ease-out), box-shadow 120ms var(--ease-out);
+  }
+  .btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 var(--ink);
+  }
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+  .btn.ghost {
+    background: #fffaf0;
+  }
+  .btn.small {
+    min-height: 42px;
+    font-size: 0.95rem;
+  }
+  .link-btn {
+    background: none;
+    border: 0;
+    padding: 8px 0;
+    font: inherit;
+    font-weight: 700;
+    color: var(--indigo);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: var(--cursor-link);
+  }
+  .danger {
+    color: var(--vermilion-2);
+  }
+  .msg {
+    margin: 8px 0;
+    font-weight: 700;
+    min-height: 1.5em;
+  }
+  .msg.err,
+  #signin-msg {
+    color: var(--vermilion-2);
+  }
+  .hint {
+    margin: -4px 0 12px;
+    font-size: 0.92rem;
+    color: #4a4a4a;
+  }
+
+  /* sign in */
+  .steps {
+    padding-left: 1.4em;
+    display: grid;
+    gap: 18px;
+  }
+  .row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .row input {
+    flex: 1 1 220px;
+  }
+
+  /* inputs */
+  input,
+  textarea,
+  select {
+    width: 100%;
+    font: inherit;
+    font-size: 1rem;
+    color: var(--ink);
+    background: #fffdf7;
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    padding: 10px 12px;
+    min-height: 48px;
+  }
+  textarea {
+    resize: vertical;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: #77705f;
+  }
+  label,
+  .label {
+    display: grid;
+    gap: 4px;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  fieldset {
+    margin: 0 0 20px;
+    padding: 16px 16px 6px;
+    background: #fffaf0;
+    border: 2px solid var(--ink);
+    border-radius: var(--radius);
+  }
+  legend {
+    font-weight: 800;
+    font-size: 1.15rem;
+    padding: 0 6px;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: -6px 0 16px;
+  }
+  .topic {
+    margin: 0;
+    position: relative;
+  }
+  .topic input {
+    position: absolute;
+    appearance: none;
+    border: 0;
+    background: none;
+    opacity: 0;
+    inset: 0;
+    min-height: 0;
+    cursor: var(--cursor-link);
+  }
+  .topic span {
+    display: inline-block;
+    padding: 8px 16px;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    background: #fffdf7;
+  }
+  .topic input:checked + span {
+    background: var(--gold);
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+  .topic input:focus-visible + span {
+    outline: 4px solid var(--indigo);
+    outline-offset: 2px;
+  }
+  .link-field {
+    grid-template-columns: 40px 1fr;
+    align-items: center;
+    gap: 10px;
+  }
+  .ico-wrap .ico {
+    width: 30px;
+    height: 30px;
+  }
+  .youtube { color: var(--vermilion); }
+  .tiktok { color: var(--ink); }
+  .instagram { color: #c13584; }
+  .facebook { color: var(--indigo-2); }
+
+  /* facts & sources rows */
+  .rows {
+    list-style: none;
+    margin: 0 0 12px;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+    counter-reset: n;
+  }
+  .rowitem {
+    display: grid;
+    grid-template-columns: 1fr 44px;
+    gap: 8px;
+    align-items: start;
+  }
+  .rowitem.source {
+    grid-template-columns: 1fr 1fr 44px;
+  }
+  .x {
+    width: 44px;
+    height: 48px;
+    font-size: 1.5rem;
+    line-height: 1;
+    background: none;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    color: var(--vermilion-2);
+    cursor: var(--cursor-link);
+  }
+  .x:hover {
+    border-color: var(--vermilion-2);
+  }
+  .more {
+    margin: 0 0 20px;
+    padding: 0 16px;
+    border: 2px dashed var(--ink);
+    border-radius: var(--radius);
+  }
+  .more summary {
+    padding: 14px 0;
+    font-weight: 800;
+  }
+  .more[open] summary {
+    margin-bottom: 6px;
+  }
+  .savebar {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding: 12px 0 16px;
+    background: var(--cream);
+    border-top: 2px solid var(--ink);
+  }
+  .savebar .msg {
+    flex: 1;
+    margin: 0;
+  }
+  .back {
+    margin-bottom: 8px;
+  }
+
+  /* list */
+  .list-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .videos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+  }
+  .vrow {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 14px;
+    align-items: center;
+    padding: 10px 14px 10px 10px;
+    font: inherit;
+    text-align: left;
+    color: inherit;
+    background: #fffaf0;
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    box-shadow: 3px 3px 0 var(--ink);
+    cursor: var(--cursor-link);
+    transition: transform 140ms var(--ease-out), box-shadow 140ms var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .vrow:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+  }
+  .vrow:active {
+    transform: scale(0.99);
+  }
+  .thumb {
+    width: 56px;
+    aspect-ratio: 9 / 16;
+    border-radius: 8px;
+    border: 2px solid var(--ink);
+    background: var(--indigo);
+    overflow: hidden;
+  }
+  .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .vtext {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+  }
+  .vmeta {
+    font-size: 0.88rem;
+    color: #4a4a4a;
+  }
+  .vtitle {
+    font-weight: 800;
+    font-size: 1.1rem;
+    line-height: 1.25;
+  }
+  .vstatus {
+    font-size: 0.88rem;
+    color: var(--teal-2);
+    font-weight: 700;
+  }
+  .vstatus.warn {
+    color: var(--vermilion-2);
+  }
+  .apps {
+    display: flex;
+    gap: 4px;
+  }
+  .app .ico {
+    width: 22px;
+    height: 22px;
+    display: block;
+  }
+  .app.off {
+    opacity: 0.22;
+  }
+
+  @media (max-width: 560px) {
+    h1 {
+      font-size: 1.6rem;
+    }
+    .vrow {
+      grid-template-columns: 48px 1fr;
+    }
+    .thumb {
+      width: 48px;
+    }
+    .apps {
+      grid-column: 2;
+    }
+    .rowitem.source {
+      grid-template-columns: 1fr 44px;
+    }
+    .rowitem.source input:nth-child(2) {
+      grid-column: 1;
+    }
+    .rowitem.source .x {
+      grid-column: 2;
+      grid-row: 1;
+    }
+  }
+</style>

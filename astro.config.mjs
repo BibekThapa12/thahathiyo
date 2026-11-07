@@ -14,6 +14,6 @@ export default defineConfig({
   output: "static",
   trailingSlash: "ignore",
   // forwarding pages (about, videos index, topics) stay out of the sitemap
-  integrations: [react(), sitemap({ filter: (p) => !/\/(about|videos|topics\/[a-z]+)\/$/.test(p) })],
+  integrations: [react(), sitemap({ filter: (p) => !/\/(about|admin|videos|topics\/[a-z]+)\/$/.test(p) })],
   build: { inlineStylesheets: "auto" },
 });
