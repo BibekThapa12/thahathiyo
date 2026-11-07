@@ -415,9 +415,20 @@
     "instagramUrl": "https://www.instagram.com/reel/DfcBgWIy03c/?utm_source=ig_web_copy_link&exln=MzRlODBiNWFlZA==&srtk=MzRlODBiNWFlZA==",
     "facebookUrl": "https://www.facebook.com/share/r/1HGry63F1D/",
     "facts": [],
-    "sources": [],
-    "slug": "why-nepal-plays-deusi-bhailo",
-    "art": "",
-    "matchTitle": []
+    "sources": [
+      {
+        "title": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Deusi/Bhailo"
+      },
+      {
+        "title": "OnlineKhabar",
+        "url": "https://english.onlinekhabar.com/who-started-deusi-bhailo-why-when-and-where-here-are-probable-answers.html"
+      },
+      {
+        "title": "eKantipur",
+        "url": "https://ekantipur.com/koseli/2025/10/18/en/deusi-bhailo-musicians-sent-by-king-bali-12-24.html"
+      }
+    ],
+    "slug": "why-nepal-plays-deusi-bhailo"
   }
 ]
