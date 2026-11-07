@@ -2,7 +2,7 @@
   {
     "slug": "nepal-flag",
     "number": 1,
-    "titleNe": "संसारमा आयताकार नभएको एक मात्र झण्डा",
+    "titleNe": "संसारमा एक मात्र झण्डा",
     "titleEn": "Nepal's Flag Explained",
     "date": "2026-10-31",
     "topic": "history",
@@ -15,8 +15,8 @@
       "झण्डा",
       "Flag"
     ],
-    "description": "संसारमा लगभग २०० देश छन्, तर आयताकार नभएको झण्डा एउटा मात्र छ — हाम्रो नेपालको! दुई त्रिकोण, चन्द्रमा र सूर्यको अर्थ के हो?",
-    "descriptionEn": "Why is Nepal's flag the only non-rectangular national flag in the world, and what do its two pennants, moon and sun mean?",
+    "description": "संसारमा लगभग २०० देश छन्, तर आयताकार नभएको झण्डा एउटा मात्र छ — हाम्रो नेपालको! किन? यसका दुई त्रिकोण, चन्द्रमा र सूर्यको अर्थ के हो?",
+    "descriptionEn": "Why is Nepal's flag the only non-rectangular national flag in the world?",
     "facts": [
       {
         "ne": "नेपालको झण्डा संसारको एक मात्र आयताकार नभएको राष्ट्रिय झण्डा हो। स्विट्जरल्याण्ड र भ्याटिकनको झण्डा वर्गाकार भए पनि चार कुने नै हुन्।",
@@ -50,7 +50,7 @@
     "slug": "bikram-sambat",
     "number": 2,
     "titleNe": "के नेपाल भविष्यमा छ? नेपाली पात्रो किन ५७ वर्ष अगाडि?",
-    "titleEn": "Bikram Sambat: Why Nepal's Calendar Is 57 Years Ahead",
+    "titleEn": "Bikram Sambat",
     "date": "2026-11-01",
     "topic": "history",
     "art": "calendar",
@@ -63,8 +63,8 @@
       "Bikram Sambat",
       "५७ वर्ष"
     ],
-    "description": "संसार २०२६ मा, नेपाल २०८३ मा! विक्रम संवत् किन ५७ वर्ष अगाडि छ, र कहिलेकाहीँ किन ५६ मात्र?",
-    "descriptionEn": "Why is the Nepali calendar (Bikram Sambat) 57 years ahead of the Gregorian calendar — and why is the gap sometimes only 56?",
+    "description": "संसार 2026 मा, नेपाल २०८३ मा! विक्रम संवत् किन ५७ वर्ष अगाडि छ? र जनवरीदेखि चैतसम्म किन ५६ वर्ष मात्र?",
+    "descriptionEn": "Why is the Nepali calendar (Bikram Sambat) 57 years ahead of the Gregorian calendar? The story starts in 57 BCE.",
     "facts": [
       {
         "ne": "विक्रम संवत् इसापूर्व ५७ बाट गनिन्छ, त्यसैले यो इस्वी संवत्भन्दा ५७ वर्ष अगाडि हुन्छ।",
@@ -102,7 +102,7 @@
     "slug": "xtreme-vs-red-bull",
     "number": 3,
     "titleNe": "नेपाली ब्रान्डले रेड बुललाई कसरी टक्कर दियो?",
-    "titleEn": "Xtreme vs Red Bull — A Nepali Business Case Study",
+    "titleEn": "Xtreme vs Red Bull",
     "date": "2026-11-02",
     "topic": "business",
     "art": "cans",
@@ -116,7 +116,7 @@
       "Xtreme"
     ],
     "description": "५ वर्षअघि कसैले नाम नसुनेको नेपाली एनर्जी ड्रिंक, आज रेड बुललाई टक्कर! २०१९ को आयात प्रतिबन्धले कसरी नयाँ ब्रान्डलाई मौका दियो?",
-    "descriptionEn": "How did a Nepali energy drink take on Red Bull? The 2019 import ban, local factories and a marketing blitz.",
+    "descriptionEn": "How did a Nepali energy drink take on Red Bull? The 2019 import ban, local factories and a marketing blitz, explained in 60 seconds.",
     "facts": [
       {
         "ne": "नेपालले २०१८/१९ मा करिब रु. २.३९ अर्बका एनर्जी ड्रिंक आयात गरेको थियो; जुन २०१९ मा व्यापार घाटा घटाउन क्याफिनयुक्त एनर्जी ड्रिंकको आयात रोकियो (पिउन होइन, आयात मात्र)।",
@@ -178,8 +178,8 @@
       "कुकुर",
       "Kukur"
     ],
-    "description": "तिहारमा हामी कुकुरलाई देवताझैँ पुज्छौँ, तर किन? यमराजका दूत, महाभारतको कथा, र मेक्सिकोसम्म पुगेको परम्परा।",
-    "descriptionEn": "Why do Nepalis worship dogs during Tihar? Yama's messengers, Yudhishthira's loyal dog and a tradition that reached Mexico.",
+    "description": "तिहारमा हामी कुकुरलाई देवताझैँ पुज्छौँ, तर किन? कुकुर यमराजका दूत, युधिष्ठिरको कुकुर जो स्वयं धर्मराज यम निस्किए, र मेक्सिकोसम्म पुगेको हाम्रो परम्परा, ४० सेकेन्डमै!",
+    "descriptionEn": "Why do Nepalis worship dogs during Tihar? Yama's messengers, the Mahabharata story of Yudhishthira's loyal dog, and how Kukur Tihar reached Mexico.",
     "facts": [
       {
         "ne": "कुकुर तिहार तिहारको दोस्रो दिन हो। हिन्दू मान्यतामा कुकुर यमराजका दूत र यमलोकका पहरेदार मानिन्छन्।",
@@ -220,7 +220,7 @@
   {
     "slug": "kathmandu-lake",
     "number": 5,
-    "titleNe": "काठमाडौं उपत्यका पहिले ताल थियो?",
+    "titleNe": "काठमाडौं उपत्यका पहिले ताल थियो? मञ्जुश्रीको कथा vs विज्ञान",
     "titleEn": "Was the Kathmandu Valley Once a Lake?",
     "date": "2026-11-04",
     "topic": "science",
@@ -233,8 +233,8 @@
       "ताल थियो",
       "Kathmandu Valley"
     ],
-    "description": "काठमाडौंमा बस्नुहुन्छ? तपाईंको घर कुनै बेला पानीमुनि थियो! मञ्जुश्रीको किंवदन्ती, चोभार, कालीमाटी र भूकम्पसँगको सम्बन्ध।",
-    "descriptionEn": "Was the Kathmandu Valley once a lake? The Manjushree legend, the Chobhar gorge, Kalimati clay and why Kathmandu shakes more in earthquakes.",
+    "description": "काठमाडौंमा बस्नुहुन्छ? तपाईंको घर कुनै बेला पानीमुनि थियो! मञ्जुश्रीले चोभारको डाँडा काटेको किंवदन्ती, र विज्ञानले पनि चोभार नै भन्छ। कालीमाटी, प्राचीन हात्तीका जीवाश्म, र भूकम्पसँगको सम्बन्ध, एक मिनेटमै!",
+    "descriptionEn": "Was the Kathmandu Valley once a lake? The Manjushree legend, the Chobhar gorge, the Kalimati clay, and why Kathmandu shakes more in earthquakes.",
     "facts": [
       {
         "ne": "काठमाडौं उपत्यकामा १० लाख वर्षभन्दा पहिले ताल बनेको थियो, र पानी चोभार गल्छीबाट बग्यो।",
@@ -292,8 +292,8 @@
       "मरेपछि",
       "After Death"
     ],
-    "description": "मुटु रोकिएपछि दिमागमा के हुन्छ, अन्तिम घडीमा पनि आवाज सुनिन्छ? र गरुड पुराण अनुसार आत्मा १३ दिन कहाँ रहन्छ?",
-    "descriptionEn": "What science found in dying brains, the hair-and-nails myth, and what the Garuda Purana says — explained in Nepali.",
+    "description": "मरेपछि के हुन्छ? मुटु रोकिएपछि दिमागमा के हुन्छ? के अन्तिम घडीसम्म पनि आवाज सुनिन्छ? र गरुड पुराण अनुसार आत्मा १३ दिन कहाँ रहन्छ?",
+    "descriptionEn": "What happens after death? What scientists found in dying brains, the hair-and-nails myth, and what the Garuda Purana says, explained in Nepali in under a minute.",
     "facts": [
       {
         "ne": "अक्सिजन नपुगेपछि केही मिनेटमै दिमागका कोषहरू मर्न थाल्छन्।",
@@ -347,7 +347,7 @@
     "slug": "kag-tihar",
     "number": 7,
     "titleNe": "काग तिहार किन मनाइन्छ?",
-    "titleEn": "Why Nepal Worships Crows on Kag Tihar",
+    "titleEn": "Why Do We Celebrate Kag Tihar? | Tihar Explained",
     "date": "2026-11-06",
     "topic": "festivals",
     "art": "crow",
@@ -360,7 +360,7 @@
       "Kag Tihar"
     ],
     "description": "तिहारको पहिलो दिन कागलाई किन पूजा गरिन्छ? यमराजका messenger, यमपञ्चकको कथा, र एउटा plot twist: काग मान्छेको अनुहार वर्षौँसम्म याद गर्छ!",
-    "descriptionEn": "Why do Nepalis feed crows on Kag Tihar, the first day of Tihar? The belief, the Yama–Yamuna story and the science of crow intelligence.",
+    "descriptionEn": "Why do Nepalis worship crows on the first day of Tihar? Crows are believed to be messengers of Yamraj, the god of death, so families leave rice and sweets on their rooftops at dawn to keep grief away for the year. Kag Tihar also starts Yampanchak, the five days of Tihar, remembered as the time Yamraj visited his sister Yamuna. And a plot twist: science says crows can remember human faces for years!",
     "facts": [
       {
         "ne": "काग तिहार तिहार (यमपञ्चक) को पहिलो दिन हो — कात्तिक कृष्ण त्रयोदशी।",

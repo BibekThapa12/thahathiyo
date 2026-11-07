@@ -68,5 +68,28 @@ const ld = [orgLd, ...(jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : []
       <slot />
     </main>
     <Footer />
+    <script>
+      // Cursor flow: small gold/red dots fall away from the pointer and fade. Mouse only, never with reduced motion.
+      // One window listener (bundled module, runs once); dots live on <body>, so page swaps simply drop them.
+      if (matchMedia("(hover: hover) and (pointer: fine)").matches && matchMedia("(prefers-reduced-motion: no-preference)").matches) {
+        let last = 0;
+        let red = false;
+        addEventListener("pointermove", (e) => {
+          if (e.pointerType !== "mouse" || e.timeStamp - last < 45) return;
+          last = e.timeStamp;
+          const dot = document.createElement("span");
+          dot.className = (red = !red) ? "trail red" : "trail";
+          document.body.append(dot);
+          const from = `translate(${e.clientX}px, ${e.clientY}px)`;
+          dot.animate(
+            [
+              { transform: `${from} scale(1)`, opacity: 0.85 },
+              { transform: `translate(${e.clientX + (Math.random() * 16 - 8)}px, ${e.clientY + 22}px) scale(0.3)`, opacity: 0 },
+            ],
+            { duration: 650, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+          ).onfinish = () => dot.remove();
+        }, { passive: true });
+      }
+    </script>
   </body>
 </html>

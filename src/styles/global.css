@@ -4,6 +4,7 @@
 
 /* Folk palette — same values as the videos (STYLE-FOLK.md). */
 :root {
+  --cursor-link: pointer;
   /* strong ease-out for presses, lifts and fades */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --indigo: #1f2a6b;
@@ -40,6 +41,38 @@ html {
   html {
     scroll-behavior: smooth;
   }
+}
+/* cursors for real mice (touch keeps its own): the logo's "?" on the page, a glowing bulb on anything clickable */
+@media (hover: hover) and (pointer: fine) {
+  :root {
+    --cursor-link: url("/cursor-link.svg") 16 7, pointer;
+  }
+  html {
+    cursor: url("/cursor.svg") 5 12, auto;
+  }
+  a,
+  button,
+  summary,
+  label {
+    cursor: var(--cursor-link);
+  }
+}
+/* cursor flow: bunting-coloured dots that drop away from the pointer (Base.astro) */
+.trail {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink);
+  background: var(--gold);
+  pointer-events: none;
+  z-index: 100;
+}
+.trail.red {
+  background: var(--vermilion);
 }
 /* every pressable element has its own press state; drop Android's blue tap box */
 a,
@@ -177,7 +210,7 @@ p {
   border-radius: 999px;
   box-shadow: 4px 4px 0 var(--ink);
   transition: transform 140ms var(--ease-out), box-shadow 140ms var(--ease-out);
-  cursor: pointer;
+  cursor: var(--cursor-link);
 }
 /* hover lift only for real pointers; on touch a tap would leave it stuck lifted */
 @media (hover: hover) and (pointer: fine) {
@@ -239,7 +272,7 @@ p {
 button.chip {
   font: inherit;
   color: inherit;
-  cursor: pointer;
+  cursor: var(--cursor-link);
   transition: background-color 150ms ease, transform 120ms var(--ease-out);
 }
 button.chip:active {
