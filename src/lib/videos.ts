@@ -3,7 +3,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import raw from "../data/videos.json";
-import { CHANNEL, TOPICS, type TopicId } from "../data/site";
+import { CHANNEL, SOCIALS, TOPICS, type Platform, type TopicId } from "../data/site";
 
 export type Fact = { ne: string; en: string };
 export type Source = { title: string; url: string };
@@ -66,6 +66,12 @@ async function fetchRss(): Promise<RssItem[]> {
   if (process.env.SKIP_RSS === "1") return [];
   // Offline testing: RSS_FILE=path/to/feed.xml npm run build
   if (process.env.RSS_FILE) return parseRss(fs.readFileSync(process.env.RSS_FILE, "utf8"));
+  // Daily Claude task: YouTube uploads from Metricool (sync.json) instead of the sometimes-down RSS feed.
+  if (process.env.FEED_JSON) {
+    const yt: { id: string; title: string; date: string }[] = JSON.parse(fs.readFileSync(process.env.FEED_JSON, "utf8")).youtube ?? [];
+    // Metricool dates look like 20261103084605 (Nepal time); the merge below wants YYYY-MM-DD first
+    return yt.map((y) => ({ id: y.id, title: y.title, published: String(y.date).replace(/^(\d{4})(\d{2})(\d{2})\d*$/, "$1-$2-$3"), description: "" }));
+  }
   try {
     const res = await fetch(RSS_URL, { signal: AbortSignal.timeout(10000) });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -183,6 +189,15 @@ async function build(): Promise<Video[]> {
     return (b.date || "").localeCompare(a.date || "") || b.number - a.number;
   });
 }
+
+/** Links to this exact video on every platform it is on (filled by tools/sync-socials.mjs). */
+export const platformLinks = (v: Video): { id: Platform; name: string; nameNe: string; url: string }[] =>
+  SOCIALS.map((s) => ({
+    id: s.id,
+    name: s.name,
+    nameNe: s.nameNe,
+    url: { youtube: v.youtubeId ? `https://www.youtube.com/shorts/${v.youtubeId}` : "", tiktok: v.tiktokUrl, instagram: v.instagramUrl, facebook: v.facebookUrl }[s.id],
+  })).filter((l) => l.url);
 
 export const topicOf = (id: string) => TOPICS.find((t) => t.id === id) ?? TOPICS[1];
 

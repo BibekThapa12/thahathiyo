@@ -7,8 +7,8 @@ import FollowButtons from "../../components/FollowButtons.astro";
 import T from "../../components/T.astro";
 import SupportCard from "../../components/SupportCard.astro";
 import { MascotBurst, VideoArt } from "../../components/art/scenes";
-import { getVideos, ogImageFor, relatedTo, topicOf, type Video } from "../../lib/videos";
-import { SOCIALS, type Platform } from "../../data/site";
+import { getVideos, ogImageFor, platformLinks, relatedTo, topicOf, type Video } from "../../lib/videos";
+import { SOCIALS } from "../../data/site";
 import { dateEn, dateNe, daysBetween, ne, todayNepal } from "../../lib/format";
 import festivals from "../../data/festivals.json";
 import { abs, u } from "../../lib/url";
@@ -21,12 +21,7 @@ interface Props { video: Video; all: Video[] }
 const { video: v, all } = Astro.props;
 const topic = topicOf(v.topic);
 const related = relatedTo(v, all);
-const ytUrl = v.youtubeId ? `https://www.youtube.com/shorts/${v.youtubeId}` : "";
-// Only apps that have this exact video; profiles live in the follow block.
-const links: { id: Platform; url: string }[] = SOCIALS.map((s) => ({
-  id: s.id,
-  url: { youtube: ytUrl, tiktok: v.tiktokUrl, instagram: v.instagramUrl, facebook: v.facebookUrl }[s.id],
-})).filter((l) => l.url);
+const links = platformLinks(v);
 const soon = v.status === "coming-soon";
 // A coming-soon festival video is expected on the festival day (festivals.json links them by slug).
 const fest = festivals.festivals.find((f) => (f as { video?: string }).video === v.slug);
@@ -97,7 +92,14 @@ const crumbs = {
           <a class="meanwhile" href={u(`videos/${latest.slug}/`)}><T ne="यसबीचमा हेर्नुहोस्:" en="Meanwhile, watch:" mix="Meanwhile यो हेर्नुस्:" /> <strong>{latest.titleNe || latest.titleEn}</strong> <span aria-hidden="true">→</span></a>
         )}
         {links.length > 0 && (
-          <p class="elsewhere"><T ne="यो भिडियो अरू एपमा:" en="Also on:" mix="अरू app मा पनि:" /> {links.map((l, i) => { const s = SOCIALS.find((x) => x.id === l.id)!; return <>{i > 0 && " · "}<a href={l.url} target="_blank" rel="noopener"><T ne={s.nameNe} en={s.name} mix={s.name} /></a></>; })}</p>
+          <div class="watch-on">
+            <p><T ne="यो भिडियो आफ्नो एपमा हेर्नुहोस्:" en="Watch this video on your app:" mix="यो video आफ्नो app मा हेर्नुस्:" /></p>
+            <ul>
+              {links.map((l) => (
+                <li><a class={`wo ${l.id}`} href={l.url} target="_blank" rel="noopener"><SocialIcon id={l.id} /><T ne={l.nameNe} en={l.name} mix={l.name} /></a></li>
+              ))}
+            </ul>
+          </div>
         )}
       </div>
       <div class="info">
@@ -286,22 +288,52 @@ const crumbs = {
     font-size: 0.85rem;
     opacity: 0.8;
   }
-  /* watch-elsewhere is plain text links so the logo buttons only ever mean follow */
   .support {
     margin-top: 28px;
   }
-  .elsewhere {
+  /* watch-on: outlined pills (solid platform buttons always mean follow) */
+  .watch-on {
     max-width: 380px;
-    margin: 6px auto 0;
-    font-size: 0.95rem;
-    text-align: center;
+    margin: 14px auto 0;
   }
-  .elsewhere a {
-    display: inline-block;
-    min-width: 44px;
-    padding: 11px 4px;
+  .watch-on p {
+    margin: 0 0 8px;
     font-weight: 700;
+    font-size: 0.95rem;
   }
+  .watch-on ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .wo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 12px;
+    background: #fffaf0;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 0.92rem;
+    text-decoration: none;
+  }
+  .wo:hover {
+    background: var(--gold);
+  }
+  .wo :global(.ico) {
+    width: 22px;
+    height: 22px;
+    flex: none;
+  }
+  .wo.youtube :global(.ico) { color: var(--vermilion); }
+  .wo.tiktok :global(.ico) { color: var(--ink); }
+  .wo.instagram :global(.ico) { color: #c13584; }
+  .wo.facebook :global(.ico) { color: var(--indigo-2); }
   /* desktop: shrink the player so the follow row fits in the first screen */
   @media (min-width: 860px) {
     .player :global(.lite-yt),

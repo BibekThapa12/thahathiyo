@@ -1,6 +1,7 @@
 ---
 import type { Video } from "../lib/videos";
-import { topicOf } from "../lib/videos";
+import { platformLinks, topicOf } from "../lib/videos";
+import SocialIcon from "./SocialIcon.astro";
 import { dateEn, dateNe, ne } from "../lib/format";
 import T from "./T.astro";
 import { VideoArt } from "./art/scenes";
@@ -25,6 +26,11 @@ const meta = {
     <h3>{v.titleNe || v.titleEn}</h3>
     <p class="meta"><T {...meta} /></p>
   </a>
+  {platformLinks(v).length > 0 && (
+    <ul class="apps" aria-label={`${v.titleNe || v.titleEn}: apps`}>
+      {platformLinks(v).map((l) => <li><a class={l.id} href={l.url} target="_blank" rel="noopener" aria-label={l.name} title={l.name}><SocialIcon id={l.id} /></a></li>)}
+    </ul>
+  )}
 </article>
 <style>
   /* The thumbnail is the card: one ink frame, text sits on the page below it. */
@@ -74,6 +80,31 @@ const meta = {
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+  /* direct links to this video on each app; 40px hit areas so four fit a phone card */
+  .apps {
+    list-style: none;
+    display: flex;
+    margin: 2px 0 0 -8px;
+    padding: 0;
+  }
+  .apps a {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+  .apps a:hover {
+    background: var(--cream-2);
+  }
+  .apps :global(.ico) {
+    width: 22px;
+    height: 22px;
+  }
+  .apps .youtube { color: var(--vermilion); }
+  .apps .tiktok { color: var(--ink); }
+  .apps .instagram { color: #c13584; }
+  .apps .facebook { color: var(--indigo-2); }
   .meta {
     margin: 0;
     font-size: 0.82rem;
