@@ -28,7 +28,8 @@ Node 22 or newer.
 | `tools/add-video.mjs` | Adds or updates a video in `videos.json` from a script doc. |
 | `tools/make-og.mjs` | Renders the OG cards and app icons with headless Chromium. |
 | `tools/screenshot.mjs` | QA screenshots at phone and desktop widths. |
-| `.github/workflows/deploy.yml` | Builds and deploys to GitHub Pages on every push and every day at 02:15 UTC. |
+| `.github/workflows/deploy.yml` | Checks the build on every push; daily at 02:15 UTC saves new YouTube uploads (RSS) to `videos.json`. |
+| `tools/sync-socials.mjs` | Fills TikTok / Instagram / Facebook links from a Metricool export (run by the daily Claude task). |
 
 ### A video entry
 
@@ -70,18 +71,13 @@ An entry with no YouTube id and no post links shows as **छिट्टै आ�
 
 ## Hosting
 
-**GitHub Pages (free, default)**
-1. Create a GitHub repository (e.g. `thaha-thiyo-website`) and push this folder to `main`.
-2. Repository → Settings → Pages → Source: **GitHub Actions**.
-3. The workflow publishes to `https://<user>.github.io/thaha-thiyo-website/` (base path handled automatically).
+**Vercel (live: https://thahathiyo.vercel.app)**
+- Vercel is connected to the GitHub repo (BibekThapa12/thahathiyo) and rebuilds on every push to `main` (build `npm run build`, output `dist`). No environment variables are needed; `astro.config.mjs` defaults the site address to the Vercel URL.
+- New videos reach the site because something pushes `videos.json`: the daily Claude task (5:30 PM, Metricool) or the GitHub Action's daily RSS check.
 
 **Custom domain (e.g. thahathiyo.com, about US$10–15/year)**
-- Buy the domain at any registrar (Cloudflare, Namecheap, Porkbun …).
-- GitHub Pages: Settings → Pages → Custom domain, add the DNS records GitHub shows, then set repository variables `SITE_URL=https://thahathiyo.com` and `BASE_PATH=/` (Settings → Secrets and variables → Actions → Variables) so canonical links, sitemap and OG URLs use the domain.
-
-**Cloudflare Pages or Netlify (free alternatives)**
-- Connect the GitHub repo; build command `npm run build`, output directory `dist`, environment variable `SITE_URL=https://your-domain`.
-- For the daily RSS refresh, add a build hook URL and call it daily (Cloudflare: a Cron Trigger worker; Netlify: a scheduled function), or keep the GitHub Action just for the cron.
+- Buy the domain, add it in Vercel → Project → Settings → Domains and set the DNS records Vercel shows.
+- Then set the Vercel environment variable `SITE_URL=https://thahathiyo.com` (or change the default in `astro.config.mjs`) so canonical links, sitemap and share images use the domain.
 
 ## Brand rules (from STYLE-FOLK.md)
 
