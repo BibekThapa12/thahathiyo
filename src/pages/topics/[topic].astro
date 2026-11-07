@@ -1,0 +1,9 @@
+---
+import Redirect from "../../components/Redirect.astro";
+import { TOPICS } from "../../data/site";
+
+export function getStaticPaths() {
+  return TOPICS.map((t) => ({ params: { topic: t.id } }));
+}
+---
+<Redirect to={`#topic-${Astro.params.topic}`} />

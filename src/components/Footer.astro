@@ -1,0 +1,110 @@
+---
+import { CHANNEL, SOCIALS, TOPICS } from "../data/site";
+import { LogoMark } from "./art/scenes";
+import SocialIcon from "./SocialIcon.astro";
+import { u } from "../lib/url";
+import T from "./T.astro";
+const year = new Date().getFullYear();
+---
+<footer class="site-footer band">
+  <div class="tri"></div>
+  <div class="wrap cols">
+    <div>
+      <a class="brand" href={u("")}><LogoMark size={52} /><strong>थाहा थियो?</strong></a>
+      <p><T ne={CHANNEL.taglineNe} en={CHANNEL.taglineEn} mix={CHANNEL.taglineMix} /></p>
+      <p class="muted small"><T ne="हरेक तथ्य भरपर्दो स्रोतबाट जाँचेर मात्र बनाइन्छ। गल्ती भेटिए कमेन्टमा भन्नुहोस्।" en="Every fact is checked against sources. Spot a mistake? Tell us in the comments." mix="हरेक fact reliable source बाट check गरेर मात्र। Mistake भेटियो? Comment मा भन्नुस्।" /></p>
+    </div>
+    <div>
+      <h2 class="h"><T ne="विषय" en="Topics" mix="Topics" /></h2>
+      <ul>
+        {TOPICS.map((t) => <li><a href={u(`#topic-${t.id}`)}><T ne={t.ne} en={t.en} mix={t.mix} /></a></li>)}
+        <li><a href={u("#videos")}><T ne="सबै भिडियो" en="All videos" mix="सबै Videos" /></a></li>
+        <li><a href={u("#about")}><T ne="हाम्रो बारेमा" en="About" mix="हाम्रो About" /></a></li>
+      </ul>
+    </div>
+    <div>
+      <h2 class="h"><T ne="फलो गर्नुहोस्" en={`Follow ${CHANNEL.handle}`} mix="Follow गर्नुस्" /></h2>
+      <ul>
+        {SOCIALS.map((s) => (
+          <li><a href={s.url} target="_blank" rel="noopener me" class="social"><SocialIcon id={s.id} class="sico" />{s.name}</a></li>
+        ))}
+      </ul>
+    </div>
+  </div>
+  <div class="wrap legal">© {year} {CHANNEL.display} · {CHANNEL.handle}</div>
+</footer>
+<style>
+  .site-footer {
+    margin-top: 40px;
+    padding-bottom: 24px;
+    border-top: var(--line) solid var(--ink);
+  }
+  .tri {
+    margin-bottom: 28px;
+  }
+  .cols {
+    display: grid;
+    gap: 28px;
+  }
+  @media (min-width: 720px) {
+    .cols {
+      grid-template-columns: 1.4fr 1fr 1fr;
+    }
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+    color: var(--gold) !important;
+  }
+  .h {
+    font-size: 1.15rem;
+    color: var(--gold);
+  }
+  .h small {
+    font-weight: 500;
+    font-size: 0.8rem;
+    color: var(--cream);
+    opacity: 0.8;
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 6px;
+  }
+  a {
+    text-decoration: none;
+  }
+  ul a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  .social {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  /* the svg is rendered by SocialIcon, outside this file's scope */
+  .social :global(.sico) {
+    flex: none;
+    width: 22px;
+    height: 22px;
+  }
+  .small {
+    font-size: 0.9rem;
+  }
+  .legal {
+    margin-top: 28px;
+    font-size: 0.85rem;
+    opacity: 0.7;
+  }
+</style>

@@ -1,0 +1,19 @@
+---
+// Old multi-page URLs (/about/, /videos/, /topics/x/) forward to sections of the one-page home.
+import { u } from "../lib/url";
+interface Props { to: string }
+const href = u(Astro.props.to);
+---
+<!doctype html>
+<html lang="ne">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <meta http-equiv="refresh" content={`0; url=${href}`} />
+    <link rel="canonical" href={new URL(href, Astro.site ?? Astro.url).href} />
+    <title>थाहा थियो?</title>
+  </head>
+  <body>
+    <a href={href}>थाहा थियो? → {href}</a>
+  </body>
+</html>

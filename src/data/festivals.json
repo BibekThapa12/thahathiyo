@@ -1,0 +1,17 @@
+{
+  "_note": "Dates follow published 2083 BS calendars; lunar festivals can shift by a day. Check the official panchanga each year and edit here. Past dates hide automatically on the daily rebuild.",
+  "festivals": [
+    { "ne": "काग तिहार", "en": "Kag Tihar", "date": "2026-11-07", "video": "kag-tihar" },
+    { "ne": "कुकुर तिहार", "en": "Kukur Tihar", "date": "2026-11-08", "video": "kukur-tihar", "approx": true },
+    { "ne": "लक्ष्मी पूजा", "en": "Laxmi Puja", "date": "2026-11-09", "approx": true },
+    { "ne": "म्ह पूजा / गोवर्धन पूजा", "en": "Mha Puja / Gobardhan Puja", "date": "2026-11-10", "approx": true },
+    { "ne": "भाइटीका", "en": "Bhai Tika", "date": "2026-11-11" },
+    { "ne": "छठ पर्व", "en": "Chhath", "date": "2026-11-13", "endDate": "2026-11-16", "approx": true },
+    { "ne": "क्रिसमस", "en": "Christmas", "date": "2026-12-25" },
+    { "ne": "तमु ल्होसार", "en": "Tamu Losar", "date": "2026-12-30", "approx": true },
+    { "ne": "माघे संक्रान्ति", "en": "Maghe Sankranti", "date": "2027-01-14", "approx": true },
+    { "ne": "महाशिवरात्रि", "en": "Maha Shivaratri", "date": "2027-02-25", "approx": true },
+    { "ne": "होली (पहाड)", "en": "Holi (hills)", "date": "2027-03-07", "approx": true },
+    { "ne": "नयाँ वर्ष २०८४", "en": "Nepali New Year 2084", "date": "2027-04-14", "approx": true }
+  ]
+}

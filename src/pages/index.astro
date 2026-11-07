@@ -1,0 +1,284 @@
+---
+import Base from "../layouts/Base.astro";
+import { HeroScene, MascotBurst } from "../components/art/scenes";
+import FollowButtons from "../components/FollowButtons.astro";
+import VideoCard from "../components/VideoCard.astro";
+import LiteYouTube from "../components/LiteYouTube.astro";
+import TopicChips from "../components/TopicChips.astro";
+import T from "../components/T.astro";
+import TeaCup from "../components/TeaCup.astro";
+import SupportCard from "../components/SupportCard.astro";
+import { getVideos, topicOf } from "../lib/videos";
+import { CHANNEL } from "../data/site";
+import { dateEn, dateNe, ne } from "../lib/format";
+import { u } from "../lib/url";
+
+const videos = await getVideos();
+const published = videos.filter((v) => v.status === "published");
+const latest = published.find((v) => v.youtubeId);
+---
+<Base
+  title="थाहा थियो? | Thaha Thiyo — नेपालीमा रोचक तथ्य · Facts in Nepali"
+  description="थाहा थियो? — नेपाल र संसारका रोचक तथ्य, १ मिनेटमै बुझिने छोटा नेपाली भिडियो। Facts and explainers in Nepali: festivals, history, science and business."
+>
+  <section class="hero band">
+    <div class="wrap hero-grid">
+      <div class="hero-art"><HeroScene /></div>
+      <div class="hero-copy">
+        <p class="hello"><T ne="नमस्ते! म थाहा हुँ।" en="Hi, I'm Thaha!" mix="Namaste! I am थाहा।" /></p>
+        <h1 class="wordmark">थाहा थियो?</h1>
+        <p class="tagline"><T ne={CHANNEL.taglineNe} en={CHANNEL.taglineEn} mix={CHANNEL.taglineMix} /></p>
+        <FollowButtons />
+        <p class="handle"><T ne="सबै प्लेटफर्ममा" en="Find us everywhere at" mix="सबै platform मा" /> <strong>{CHANNEL.handle}</strong></p>
+        <a class="tea-chip" href="#support"><TeaCup /><T ne="थाहालाई एक कप चिया" en="Buy Thaha a tea" mix="थाहालाई एक cup चिया" /></a>
+      </div>
+    </div>
+    <div class="tri flip"></div>
+  </section>
+
+  {latest && (
+    <section class="section latest" aria-labelledby="latest-h">
+      <div class="wrap latest-grid">
+        <LiteYouTube id={latest.youtubeId} title={latest.titleNe} art={latest.art} eager />
+        <div class="latest-copy">
+          <p class="latest-meta"><strong><T ne="नयाँ भिडियो" en="New video" mix="Fresh video" /></strong> · <T ne={`#${ne(latest.number)}${latest.date ? ` · ${dateNe(latest.date)}` : ""} · ${topicOf(latest.topic).ne}`} en={`#${latest.number}${latest.date ? ` · ${dateEn(latest.date)}` : ""} · ${topicOf(latest.topic).en}`} mix={`#${ne(latest.number)}${latest.date ? ` · ${dateNe(latest.date)}` : ""} · ${topicOf(latest.topic).mix}`} /></p>
+          <h2 id="latest-h">{latest.titleNe || latest.titleEn}</h2>
+          {(latest.description || latest.descriptionEn) && <p class="latest-desc">{latest.description || latest.descriptionEn}</p>}
+          <a class="btn" href={u(`videos/${latest.slug}/`)}><T ne="तथ्य र स्रोत हेर्नुहोस् →" en="Facts & sources →" mix="Facts र sources हेर्नुस् →" /></a>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="section" id="videos" aria-labelledby="videos-h">
+    <div class="wrap">
+      <h2 id="videos-h"><T ne="सबै भिडियो" en="All videos" mix="सबै Videos" /></h2>
+      <TopicChips />
+      {videos.length ? (
+        <ul class="vgrid">{videos.map((v) => <li data-topic-item={v.topic}><VideoCard video={v} /></li>)}</ul>
+      ) : (
+        <div class="empty card"><MascotBurst mood="wonder" /><p><T ne="भिडियो छिट्टै आउँदैछन्!" en="Videos coming soon!" mix="Videos छिट्टै आउँदैछन्!" /></p></div>
+      )}
+    </div>
+  </section>
+
+  <section class="section about" id="about" aria-labelledby="about-h">
+    <div class="wrap">
+      <div class="intro">
+        <div class="art"><MascotBurst mood="smile" /></div>
+        <div>
+          <h2 id="about-h"><T ne="हाम्रो बारेमा" en="About the channel" mix="हाम्रो About" /></h2>
+          <p class="lead"><T ne="थाहा थियो? नेपाली भाषामा रोचक तथ्य र सजिलो व्याख्या गर्ने छोटा भिडियोको च्यानल हो — हरेक दिन एउटा नयाँ “थाहा थियो?”" en="Thaha Thiyo (“Did you know?”) makes one-minute explainers in Nepali about Nepal and the world: festivals, history, science and business." mix="थाहा थियो? नेपालीमा interesting facts र easy explanation दिने short video channel हो — हरेक दिन एउटा नयाँ “थाहा थियो?” moment।" /></p>
+          <p><T ne="ढाका टोपी, गोलो चस्मा, दौरा-सुरुवाल र निधारमा “?” आकारको कपाल — यही हो थाहा। हरेक भिडियोमा ऊ कथा सुनाउँछ, अचम्म मान्छ र प्रश्न सोध्छ।" en="Thaha wears a dhaka topi, round glasses and daura suruwal, with a “?” curl on his forehead — the channel's mark. He narrates every video." mix="ढाका टोपी, round चस्मा, दौरा-सुरुवाल र निधारमा “?” shape को कपाल — यही हो थाहा। हरेक video मा ऊ story सुनाउँछ, shock हुन्छ र question सोध्छ।" /></p>
+        </div>
+      </div>
+
+      <div class="about-grid">
+        <section class="block card" aria-labelledby="how-h">
+          <h3 id="how-h"><T ne="भिडियो कसरी बनाइन्छ?" en="How the videos are made" mix="Video कसरी बन्छ?" /></h3>
+          <ol class="steps">
+            <li><strong><T ne="प्रश्न र अनुसन्धान" en="Question and research" mix="Question र research" /></strong> — <T ne="एउटा रोचक प्रश्न छानिन्छ, र भरपर्दो स्रोतबाट तथ्य जाँचिन्छ। परम्परा वा विश्वासलाई “भनिन्छ / मान्यता” भनेर छुट्याइन्छ।" en="We pick an interesting question and check the facts against reliable sources. Beliefs and traditions are labelled as beliefs." mix="एउटा interesting question छानिन्छ, अनि reliable source बाट fact check हुन्छ। Belief वा tradition लाई “भनिन्छ / मान्यता” भनेर अलग राखिन्छ।" /></li>
+            <li><strong><T ne="स्क्रिप्ट" en="Script" mix="Script" /></strong> — <T ne="४०–६० सेकेन्डको छोटो, सजिलो नेपाली स्क्रिप्ट।" en="A short, plain-Nepali script of 40–60 seconds." mix="४०–६० second को short, easy नेपाली script।" /></li>
+            <li><strong><T ne="आवाज र चित्र" en="Voice and art" mix="Voice र art" /></strong> — <T ne="AI आवाज, र मिथिला/पौभा शैलीका लोककला चित्र कोडबाट एनिमेट गरिन्छ।" en="An AI voice, and Mithila/Paubha-inspired folk-art illustrations animated in code." mix="AI voice, र मिथिला/पौभा style का folk-art drawing code बाट animate गरिन्छ।" /></li>
+            <li><strong><T ne="स्रोत यहीँ" en="Sources right here" mix="Sources यहीँ" /></strong> — <T ne="हरेक भिडियोको पेजमा मुख्य तथ्य र स्रोतका लिङ्क राखिन्छन्।" en="Every video page on this site lists the key facts and source links." mix="हरेक video को page मा main facts र source links राखिन्छन्।" /></li>
+          </ol>
+          <p class="muted small"><T ne="AI आवाज वा AI चित्र प्रयोग भएका भिडियोमा प्लेटफर्मको “AI-generated” लेबल लगाइन्छ।" en="Videos using AI voice or imagery carry the platform's AI label." mix="AI voice वा AI image use भएका video मा platform को “AI-generated” label लगाइन्छ।" /></p>
+        </section>
+
+        <section class="block card" id="contact" aria-labelledby="contact-h">
+          <h3 id="contact-h"><T ne="सम्पर्क र सहकार्य" en="Contact & collaborations" mix="Contact र Collab" /></h3>
+          <p><T ne="गल्ती भेटियो, प्रश्न छ, वा सहकार्य गर्न चाहनुहुन्छ? इमेल गर्नुहोस्:" en="Found a mistake, have a question, or want to collaborate? Email us:" mix="Mistake भेटियो, question छ, वा collab गर्ने मन छ? Email गर्नुस्:" /></p>
+          <p><a class="btn" href={`mailto:${CHANNEL.contactEmail}`}>{CHANNEL.contactEmail}</a></p>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <section class="section support-sec" aria-label="Support">
+    <div class="wrap"><SupportCard full /></div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    overflow: hidden;
+    border-bottom: var(--line) solid var(--ink);
+  }
+  .hero-grid {
+    display: grid;
+    gap: 8px;
+    padding-top: 30px;
+    padding-bottom: 28px;
+  }
+  .hero-art {
+    border: var(--line) solid var(--ink);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 6px 6px 0 var(--ink);
+    aspect-ratio: 1080 / 860;
+    background: var(--indigo);
+  }
+  .hero-art :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+  .hello {
+    margin: 14px 0 0;
+    font-size: 1.05rem;
+  }
+  .wordmark {
+    font-size: clamp(3.2rem, 14vw, 5.6rem);
+    color: var(--gold);
+    margin: 0;
+    line-height: 1.1;
+    text-shadow: 4px 4px 0 var(--ink), -2px -2px 0 var(--ink), 2px -2px 0 var(--ink), -2px 2px 0 var(--ink);
+  }
+  .tagline {
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 18px;
+  }
+  /* small, so the follow buttons stay the hero's main action */
+  .tea-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    margin-top: 14px;
+    padding: 4px 16px 4px 8px;
+    background: var(--cream);
+    color: var(--ink) !important;
+    border: 3px solid var(--ink);
+    border-radius: 999px;
+    box-shadow: 3px 3px 0 var(--gold);
+    font-weight: 800;
+    text-decoration: none;
+  }
+  .tea-chip :global(.cup) {
+    width: 30px;
+  }
+  .handle {
+    margin: 14px 0 0;
+    font-size: 0.95rem;
+  }
+  @media (min-width: 900px) {
+    .hero-grid {
+      grid-template-columns: 1.05fr 1fr;
+      align-items: center;
+      gap: 40px;
+      padding-top: 48px;
+      padding-bottom: 48px;
+    }
+    .hero-copy {
+      order: -1;
+    }
+  }
+  .latest-grid {
+    display: grid;
+    gap: 20px;
+  }
+  .latest-meta {
+    margin: 0 0 6px;
+    font-size: 0.95rem;
+  }
+  .latest-meta strong {
+    color: var(--vermilion-2);
+  }
+  .latest-desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-width: 60ch;
+  }
+  @media (min-width: 800px) {
+    .latest-grid {
+      grid-template-columns: 300px 1fr;
+      align-items: start;
+      gap: 40px;
+    }
+    .latest-copy {
+      padding-top: 12px;
+    }
+  }
+  #videos :global(.chips) {
+    margin-bottom: 20px;
+  }
+  /* every video, filtered in place by the topic chips */
+  .vgrid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px 14px;
+  }
+  @media (min-width: 720px) {
+    .vgrid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 28px 20px;
+    }
+  }
+  @media (min-width: 1040px) {
+    .vgrid {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+  .about {
+    border-top: var(--line) solid var(--ink);
+  }
+  .intro {
+    display: grid;
+    gap: 16px;
+    align-items: center;
+  }
+  .intro .art {
+    width: min(200px, 60%);
+  }
+  @media (min-width: 760px) {
+    .intro {
+      grid-template-columns: 240px 1fr;
+      gap: 40px;
+    }
+    .intro .art {
+      width: 100%;
+    }
+  }
+  .lead {
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+  .about-grid {
+    display: grid;
+    gap: 24px;
+    margin-top: 32px;
+  }
+  @media (min-width: 900px) {
+    .about-grid {
+      grid-template-columns: 1.6fr 1fr;
+      align-items: start;
+    }
+  }
+  .block {
+    padding: 22px 18px;
+  }
+  .block h3 {
+    font-size: 1.3rem;
+  }
+  .steps {
+    display: grid;
+    gap: 12px;
+    padding-left: 1.3em;
+  }
+  .small {
+    font-size: 0.88rem;
+  }
+  .support-sec {
+    padding-top: 8px;
+  }
+  .empty {
+    padding: 20px;
+    text-align: center;
+    max-width: 420px;
+  }
+</style>

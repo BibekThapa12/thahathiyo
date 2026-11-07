@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+*.log
+
+# local AI tooling (not part of the website)
+.claude/
+.agents/
+.impeccable/
+skills-lock.json
+.github/skills/
+.github/agents/
+.github/hooks/
+.codex/

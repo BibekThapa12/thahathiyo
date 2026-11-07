@@ -1,0 +1,82 @@
+---
+import type { Video } from "../lib/videos";
+import { topicOf } from "../lib/videos";
+import { dateEn, dateNe, ne } from "../lib/format";
+import T from "./T.astro";
+import { VideoArt } from "./art/scenes";
+import { u } from "../lib/url";
+interface Props { video: Video; eager?: boolean }
+const { video: v, eager = false } = Astro.props;
+const t = topicOf(v.topic);
+const join = (...p: (string | false)[]) => p.filter(Boolean).join(" · ");
+const meta = {
+  ne: join(`#${ne(v.number)}`, t.ne, !!v.date && dateNe(v.date)),
+  en: join(`#${v.number}`, t.en, !!v.date && dateEn(v.date)),
+  mix: join(`#${ne(v.number)}`, t.mix, !!v.date && dateNe(v.date)),
+};
+---
+<article class="vcard">
+  <a href={u(`videos/${v.slug}/`)} class="link">
+    <div class="thumb">
+      <VideoArt art={v.art} label="" />
+      {v.thumbnail && <img src={v.thumbnail} alt="" width="1080" height="1920" loading={eager ? "eager" : "lazy"} decoding="async" onerror="this.remove()" />}
+      {v.status === "coming-soon" && <span class="soon"><T ne="छिट्टै आउँदैछ" en="Coming soon" mix="Coming soon!" /></span>}
+    </div>
+    <h3>{v.titleNe || v.titleEn}</h3>
+    <p class="meta"><T {...meta} /></p>
+  </a>
+</article>
+<style>
+  /* The thumbnail is the card: one ink frame, text sits on the page below it. */
+  .link {
+    display: block;
+    text-decoration: none;
+  }
+  .thumb {
+    position: relative;
+    aspect-ratio: 9 / 16;
+    background: var(--indigo);
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .link:hover .thumb {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+  .thumb img,
+  .thumb :global(svg) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .soon {
+    position: absolute;
+    left: 8px;
+    bottom: 8px;
+    background: var(--vermilion);
+    color: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-size: 0.8rem;
+    font-weight: 800;
+  }
+  h3 {
+    font-size: 1rem;
+    line-height: 1.3;
+    margin: 10px 0 2px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .meta {
+    margin: 0;
+    font-size: 0.82rem;
+    opacity: 0.75;
+  }
+</style>

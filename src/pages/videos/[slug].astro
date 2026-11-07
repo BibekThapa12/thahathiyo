@@ -1,0 +1,448 @@
+---
+import Base from "../../layouts/Base.astro";
+import LiteYouTube from "../../components/LiteYouTube.astro";
+import VideoCard from "../../components/VideoCard.astro";
+import SocialIcon from "../../components/SocialIcon.astro";
+import FollowButtons from "../../components/FollowButtons.astro";
+import T from "../../components/T.astro";
+import SupportCard from "../../components/SupportCard.astro";
+import { MascotBurst, VideoArt } from "../../components/art/scenes";
+import { getVideos, ogImageFor, relatedTo, topicOf, type Video } from "../../lib/videos";
+import { SOCIALS, type Platform } from "../../data/site";
+import { dateEn, dateNe, daysBetween, ne, todayNepal } from "../../lib/format";
+import festivals from "../../data/festivals.json";
+import { abs, u } from "../../lib/url";
+
+export async function getStaticPaths() {
+  const videos = await getVideos();
+  return videos.map((video) => ({ params: { slug: video.slug }, props: { video, all: videos } }));
+}
+interface Props { video: Video; all: Video[] }
+const { video: v, all } = Astro.props;
+const topic = topicOf(v.topic);
+const related = relatedTo(v, all);
+const ytUrl = v.youtubeId ? `https://www.youtube.com/shorts/${v.youtubeId}` : "";
+// Only apps that have this exact video; profiles live in the follow block.
+const links: { id: Platform; url: string }[] = SOCIALS.map((s) => ({
+  id: s.id,
+  url: { youtube: ytUrl, tiktok: v.tiktokUrl, instagram: v.instagramUrl, facebook: v.facebookUrl }[s.id],
+})).filter((l) => l.url);
+const soon = v.status === "coming-soon";
+// A coming-soon festival video is expected on the festival day (festivals.json links them by slug).
+const fest = festivals.festivals.find((f) => (f as { video?: string }).video === v.slug);
+const daysLeft = soon && fest ? daysBetween(todayNepal(), fest.date) : -1;
+const soonTag =
+  daysLeft === 0 ? { ne: "आज आउँदैछ", en: "Out today", mix: "आज out हुँदैछ!" }
+  : daysLeft === 1 ? { ne: "भोलि आउँदैछ", en: "Out tomorrow", mix: "भोलि out हुँदैछ!" }
+  : daysLeft > 1 ? { ne: `${ne(daysLeft)} दिनमा आउँदैछ`, en: `Out in ${daysLeft} days`, mix: `${ne(daysLeft)} दिनमा out!` }
+  : { ne: "छिट्टै आउँदैछ", en: "Coming soon", mix: "Coming soon!" };
+const latest = all.find((x) => x.status === "published" && x.youtubeId);
+const subscribeUrl = `${SOCIALS[0].url}?sub_confirmation=1`;
+const desc = [v.description, v.descriptionEn].filter(Boolean).join(" — ").slice(0, 300);
+const jsonLd = v.youtubeId
+  ? {
+      "@context": "https://schema.org",
+      "@type": "VideoObject",
+      name: [v.titleNe, v.titleEn].filter(Boolean).join(" | "),
+      description: desc || v.titleNe,
+      thumbnailUrl: [`https://i.ytimg.com/vi/${v.youtubeId}/hqdefault.jpg`],
+      uploadDate: v.date ? `${v.date}T19:00:00+05:45` : undefined,
+      embedUrl: `https://www.youtube.com/embed/${v.youtubeId}`,
+      contentUrl: `https://www.youtube.com/shorts/${v.youtubeId}`,
+      inLanguage: "ne",
+      genre: topic.en,
+      url: abs(`videos/${v.slug}/`, Astro.site),
+      publisher: { "@type": "Organization", name: "थाहा थियो? | Thaha Thiyo", logo: { "@type": "ImageObject", url: abs("icon-512.png", Astro.site) } },
+    }
+  : undefined;
+const crumbs = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "थाहा थियो?", item: abs("", Astro.site) },
+    { "@type": "ListItem", position: 2, name: "भिडियो", item: abs("videos/", Astro.site) },
+    { "@type": "ListItem", position: 3, name: v.titleNe, item: abs(`videos/${v.slug}/`, Astro.site) },
+  ],
+};
+---
+<Base
+  title={v.titleEn ? `${v.titleNe} | ${v.titleEn}` : v.titleNe}
+  description={desc || `${v.titleNe} — थाहा थियो? नेपाली तथ्य भिडियो`}
+  image={ogImageFor(v)}
+  type="video.other"
+  jsonLd={jsonLd ? [jsonLd, crumbs] : crumbs}
+>
+  <article class="wrap vpage section">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href={u("")}><T ne="गृहपृष्ठ" en="Home" mix="Home" /></a> <span aria-hidden="true">›</span> <a href={u("#videos")}><T ne="भिडियो" en="Videos" mix="Videos" /></a> <span aria-hidden="true">›</span> <a href={u(`#topic-${v.topic}`)}><T ne={topic.ne} en={topic.en} mix={topic.mix} /></a>
+    </nav>
+    <div class="layout">
+      <div class="player">
+        {v.youtubeId ? (
+          <LiteYouTube id={v.youtubeId} title={v.titleNe} art={v.art} eager />
+        ) : (
+          <div class="soon card">
+            <VideoArt art={v.art} label={v.titleNe} />
+            <p class="soon-tag"><T {...soonTag} />{fest && daysLeft >= 0 && <small><T ne={dateNe(fest.date)} en={dateEn(fest.date)} /></small>}</p>
+          </div>
+        )}
+        <div class="quick-follow">
+          <div class="qf-art" aria-hidden="true"><MascotBurst mood="point" /></div>
+          <a class="btn youtube" href={subscribeUrl} target="_blank" rel="noopener me">
+            <SocialIcon id="youtube" />
+            <span><T ne="युट्युबमा फलो गर्नुहोस्" en="Follow on YouTube" mix="YouTube मा Follow गर्नुस्" /></span>
+          </a>
+        </div>
+        {soon && latest && (
+          <a class="meanwhile" href={u(`videos/${latest.slug}/`)}><T ne="यसबीचमा हेर्नुहोस्:" en="Meanwhile, watch:" mix="Meanwhile यो हेर्नुस्:" /> <strong>{latest.titleNe || latest.titleEn}</strong> <span aria-hidden="true">→</span></a>
+        )}
+        {links.length > 0 && (
+          <p class="elsewhere"><T ne="यो भिडियो अरू एपमा:" en="Also on:" mix="अरू app मा पनि:" /> {links.map((l, i) => { const s = SOCIALS.find((x) => x.id === l.id)!; return <>{i > 0 && " · "}<a href={l.url} target="_blank" rel="noopener"><T ne={s.nameNe} en={s.name} mix={s.name} /></a></>; })}</p>
+        )}
+      </div>
+      <div class="info">
+        <p class="meta">
+          <span class="num"><T ne={`#${ne(v.number)}`} en={`#${v.number}`} /></span>
+          <a class={`chip ${v.topic}`} href={u(`#topic-${v.topic}`)}><T ne={topic.ne} en={topic.en} mix={topic.mix} /></a>
+          {v.date && <time datetime={v.date}><T ne={dateNe(v.date)} en={dateEn(v.date)} /></time>}
+        </p>
+        <h1>{v.titleNe || v.titleEn}</h1>
+        {(v.description || v.descriptionEn) && <p class="lead">{v.description || v.descriptionEn}</p>}
+
+        {v.facts.length > 0 ? (
+          <section class="facts card" aria-labelledby="facts-h">
+            <h2 id="facts-h"><T ne="मुख्य तथ्य" en="Key facts" mix="Main facts" /></h2>
+            <ol>
+              {v.facts.map((f) => (
+                <li>
+                  <p class="fne">{f.ne || f.en}</p>
+                </li>
+              ))}
+            </ol>
+          </section>
+        ) : (
+          <section class="facts card empty">
+            <div class="ea"><MascotBurst mood="wonder" /></div>
+            <p><T ne="यो भिडियोका तथ्य र स्रोत छिट्टै थपिनेछन्।" en="Facts and sources for this video will be added soon." mix="यो video का facts र sources छिट्टै आउँदैछन्।" /></p>
+          </section>
+        )}
+
+        {v.sources.length > 0 && (
+          <section class="sources" aria-labelledby="src-h">
+            <h2 id="src-h" class="h3"><T ne="स्रोत" en="Sources" mix="Sources" /></h2>
+            <ul>
+              {v.sources.map((s) => <li><a href={s.url} target="_blank" rel="noopener nofollow">{s.title}</a></li>)}
+            </ul>
+            <p class="muted small"><T ne="“भनिन्छ / मान्यता” भनिएका कुरा परम्परा वा विश्वास हुन्, प्रमाणित तथ्य होइनन्।" en="Items marked as belief or tradition are not presented as proven fact." mix="“भनिन्छ / मान्यता” भनेका कुरा belief वा tradition हुन्, proven fact होइनन्।" /></p>
+          </section>
+        )}
+
+        <section class="ask band" aria-labelledby="ask-h">
+          <div class="ask-art"><MascotBurst mood="point" label="थाहा फलो बटनतिर देखाउँदै" /></div>
+          <div class="bubble">
+            {soon ? (
+              <h2 id="ask-h"><T ne="यो भिडियो छिट्टै आउँदैछ। पहिलै हेर्न फलो गर्नुहोस्!" en="Coming soon. Follow to see it first!" mix="यो video छिट्टै आउँदैछ। पहिलै हेर्न Follow गर्नुस्!" /></h2>
+            ) : (
+              <h2 id="ask-h"><T ne={`यो तथ्य #${ne(v.number)} थियो। भोलि अर्को आउँछ, छुटाउनुहुन्न नि? फलो गर्नुहोस्!`} en={`That was fact #${v.number}. Another one tomorrow. Follow so you don't miss it!`} mix={`यो fact #${ne(v.number)} थियो। भोलि अर्को आउँछ, miss गर्नुहुन्न नि? Follow गर्नुस्!`} /></h2>
+            )}
+          </div>
+          <div class="ask-btns"><FollowButtons label="Follow @thahathiyo" /></div>
+        </section>
+        <div class="support"><SupportCard /></div>
+      </div>
+    </div>
+
+    {related.length > 0 && (
+      <section class="related" aria-labelledby="rel-h">
+        <h2 id="rel-h"><T ne="अरू भिडियो" en="More videos" mix="अरू Videos" /></h2>
+        <div class="grid">{related.map((r) => <VideoCard video={r} />)}</div>
+      </section>
+    )}
+  </article>
+</Base>
+
+<style>
+  .crumbs {
+    font-size: 0.9rem;
+    margin-bottom: 18px;
+  }
+  .crumbs a {
+    font-weight: 700;
+  }
+  .layout {
+    display: grid;
+    gap: 24px;
+  }
+  @media (min-width: 860px) {
+    .layout {
+      grid-template-columns: 380px 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+    .player {
+      position: sticky;
+      top: 110px;
+    }
+  }
+  /* phone: follow right where the video ends */
+  .quick-follow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 380px;
+    margin: 14px auto 0;
+  }
+  .qf-art {
+    width: 56px;
+    flex: none;
+  }
+  .quick-follow .btn {
+    flex: 1;
+    justify-content: center;
+  }
+  .meanwhile {
+    display: block;
+    max-width: 380px;
+    margin: 12px auto 0;
+    padding: 10px 14px;
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    background: #fffaf0;
+    text-decoration: none;
+    font-size: 0.95rem;
+  }
+  .meanwhile:hover {
+    background: var(--gold);
+  }
+  @media (max-width: 859px) {
+    .player .soon {
+      max-width: min(380px, calc(52svh * 9 / 16));
+    }
+  }
+  .crumbs a:first-child {
+    min-width: 44px;
+    text-align: center;
+  }
+  .soon {
+    position: relative;
+    aspect-ratio: 9 / 16;
+    max-width: 380px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 20px;
+  }
+  .soon :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+  .soon-tag {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    margin: 0;
+    text-align: center;
+    background: var(--vermilion);
+    color: #fff;
+    border: 3px solid var(--ink);
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 1.3rem;
+    line-height: 1.2;
+    padding: 8px;
+  }
+  .soon-tag small {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+  }
+  .num {
+    background: var(--gold);
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    padding: 0 10px;
+    font-weight: 800;
+  }
+  h1 {
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+  }
+  .lead {
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+  .h3 {
+    font-size: 1.2rem;
+    margin-top: 20px;
+  }
+  .h3 small {
+    font-weight: 500;
+    font-size: 0.85rem;
+    opacity: 0.8;
+  }
+  /* watch-elsewhere is plain text links so the logo buttons only ever mean follow */
+  .support {
+    margin-top: 28px;
+  }
+  .elsewhere {
+    max-width: 380px;
+    margin: 6px auto 0;
+    font-size: 0.95rem;
+    text-align: center;
+  }
+  .elsewhere a {
+    display: inline-block;
+    min-width: 44px;
+    padding: 11px 4px;
+    font-weight: 700;
+  }
+  /* desktop: shrink the player so the follow row fits in the first screen */
+  @media (min-width: 860px) {
+    .player :global(.lite-yt),
+    .player .soon {
+      max-width: min(380px, calc((100svh - 300px) * 9 / 16));
+    }
+  }
+  /* थाहा asks for the follow in a speech bubble */
+  .ask {
+    margin-top: 40px;
+    max-width: 760px;
+    padding: 18px 16px 20px;
+    border: var(--line) solid var(--ink);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    display: grid;
+    grid-template-columns: 92px 1fr;
+    gap: 14px 12px;
+    align-items: center;
+  }
+  .ask-art {
+    width: 92px;
+  }
+  .bubble {
+    position: relative;
+    background: var(--cream);
+    color: var(--ink);
+    border: 3px solid var(--ink);
+    border-radius: 18px;
+    padding: 10px 14px;
+  }
+  .bubble::before {
+    content: "";
+    position: absolute;
+    left: -11px;
+    top: 50%;
+    width: 16px;
+    height: 16px;
+    margin-top: -8px;
+    background: var(--cream);
+    border-left: 3px solid var(--ink);
+    border-bottom: 3px solid var(--ink);
+    transform: rotate(45deg);
+  }
+  .bubble h2 {
+    font-size: 1.15rem;
+    margin: 0;
+  }
+  .bubble .en {
+    font-size: 0.78em;
+  }
+  .ask-btns {
+    grid-column: 1 / -1;
+  }
+  .crumbs a {
+    display: inline-block;
+    padding: 11px 4px;
+  }
+  .sources a {
+    display: inline-block;
+    padding: 9px 0;
+  }
+  .facts {
+    margin-top: 40px;
+    padding: 22px 18px;
+    background: var(--cream);
+    position: relative;
+  }
+  .facts::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 18px;
+    background: var(--tri) repeat-x;
+    border-radius: 12px 12px 0 0;
+  }
+  .facts h2 {
+    margin-top: 12px;
+  }
+  .facts ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 16px;
+    counter-reset: f;
+  }
+  .facts li {
+    counter-increment: f;
+    position: relative;
+    padding-left: 52px;
+  }
+  .facts li::before {
+    content: "?";
+    position: absolute;
+    left: 0;
+    top: 2px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 3px solid var(--ink);
+    color: var(--vermilion);
+    font-weight: 800;
+    font-size: 1.4rem;
+    line-height: 32px;
+    text-align: center;
+  }
+  .fne {
+    font-weight: 700;
+    margin: 0 0 2px;
+  }
+  .fen {
+    margin: 0;
+    font-size: 0.95rem;
+    opacity: 0.8;
+  }
+  .empty {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  .ea {
+    width: 120px;
+    flex: none;
+  }
+  .sources {
+    margin-top: 28px;
+  }
+  .sources ul {
+    padding-left: 1.2em;
+    display: grid;
+    gap: 6px;
+    word-break: break-word;
+  }
+  .small {
+    font-size: 0.85rem;
+  }
+  .related {
+    margin-top: 44px;
+  }
+</style>

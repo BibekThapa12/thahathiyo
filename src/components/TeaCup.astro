@@ -1,0 +1,12 @@
+---
+// Folk-line tea cup (ink + gold, tika-red steam) for the support card and hero chip.
+interface Props { class?: string }
+const { class: cls = "cup" } = Astro.props;
+---
+<svg class={cls} viewBox="0 0 64 64" aria-hidden="true">
+  <path d="M22 16c-3-4 3-6 0-10M32 16c-3-4 3-6 0-10M42 16c-3-4 3-6 0-10" fill="none" stroke="#D4372C" stroke-width="3" stroke-linecap="round" />
+  <path d="M10 24h38v14a14 14 0 0 1-14 14h-10a14 14 0 0 1-14-14z" fill="#F7C948" stroke="#111" stroke-width="4" stroke-linejoin="round" />
+  <path d="M48 28h3a7 7 0 0 1 0 14h-5" fill="none" stroke="#111" stroke-width="4" />
+  <path d="M6 58h46" stroke="#111" stroke-width="4" stroke-linecap="round" />
+  <path d="M18 34l4 4 4-4 4 4 4-4 4 4" fill="none" stroke="#D4372C" stroke-width="2.5" stroke-linejoin="round" />
+</svg>

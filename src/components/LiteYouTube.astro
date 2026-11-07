@@ -1,0 +1,118 @@
+---
+import { VideoArt } from "./art/scenes";
+import T from "./T.astro";
+// Click-to-load YouTube player: only a thumbnail until the visitor taps play (no iframe, no YouTube JS on load).
+interface Props { id: string; title: string; eager?: boolean; art?: string }
+const { id, title, eager = false, art } = Astro.props;
+const thumb = `https://i.ytimg.com/vi/${id}/oar2.jpg`; // full 1080x1920 Short frame
+---
+<div class="lite-yt card" data-id={id} data-title={title}>
+  <button type="button" class="lite-btn" aria-label={`भिडियो चलाउनुहोस्: ${title} | Play video`}>
+    <VideoArt art={art} label="" />
+    <img onerror="this.remove()" src={thumb} alt="" width="1080" height="1920" loading={eager ? "eager" : "lazy"} decoding="async" fetchpriority={eager ? "high" : "auto"} />
+    <span class="lite-play" aria-hidden="true"></span>
+    <span class="lite-hint">▶ <T ne="हेर्नुहोस्" en="Play" mix="Play गर्नुस्" /></span>
+  </button>
+  <noscript><a href={`https://www.youtube.com/shorts/${id}`}>YouTube मा हेर्नुहोस् · Watch on YouTube</a></noscript>
+</div>
+<script>
+  // Bundled module: runs once per visit, and the document-level listener survives client-side page swaps.
+  document.addEventListener("click", (e) => {
+    const btn = (e.target as Element | null)?.closest?.<HTMLButtonElement>(".lite-btn");
+    const box = btn?.parentElement;
+    if (!box) return;
+    const f = document.createElement("iframe");
+    f.src = `https://www.youtube-nocookie.com/embed/${box.dataset.id}?autoplay=1&playsinline=1&rel=0`;
+    f.title = box.dataset.title ?? "";
+    f.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+    f.allowFullscreen = true;
+    box.replaceChildren(f);
+    f.focus(); // the tapped button is gone; keep keyboard users on the player
+    box.classList.add("on");
+  });
+</script>
+<style>
+  .lite-yt {
+    position: relative;
+    aspect-ratio: 9 / 16;
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+    overflow: hidden;
+    background: var(--ink);
+    border-radius: 20px;
+  }
+  .lite-btn {
+    all: unset;
+    cursor: pointer;
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+  /* the thumbnail covers an outline drawn on the button, so ring the whole player */
+  .lite-btn:focus-visible {
+    outline: none;
+  }
+  .lite-yt:has(.lite-btn:focus-visible) {
+    outline: 4px solid var(--indigo);
+    outline-offset: 3px;
+  }
+  /* phones: keep the title and follow row in the first screen */
+  @media (max-width: 859px) {
+    .lite-yt {
+      max-width: min(380px, calc(52svh * 9 / 16));
+    }
+  }
+  .lite-btn img,
+  .lite-btn :global(svg) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .lite-play {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 84px;
+    height: 84px;
+    margin: -42px 0 0 -42px;
+    border-radius: 50%;
+    background: var(--vermilion);
+    border: 4px solid var(--ink);
+    box-shadow: 5px 5px 0 var(--ink);
+    transition: transform 0.15s;
+  }
+  .lite-play::after {
+    content: "";
+    position: absolute;
+    left: 31px;
+    top: 22px;
+    border-left: 28px solid #fff;
+    border-top: 17px solid transparent;
+    border-bottom: 17px solid transparent;
+  }
+  .lite-btn:hover .lite-play {
+    transform: scale(1.08);
+  }
+  .lite-hint {
+    position: absolute;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    background: var(--gold);
+    border: 3px solid var(--ink);
+    border-radius: 999px;
+    padding: 2px 14px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+  .lite-yt :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+</style>

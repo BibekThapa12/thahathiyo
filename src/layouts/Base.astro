@@ -1,0 +1,100 @@
+---
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import T from "../components/T.astro";
+import { ClientRouter } from "astro:transitions";
+import { CHANNEL, SOCIALS } from "../data/site";
+import { abs, u } from "../lib/url";
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  type?: "website" | "video.other";
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  noindex?: boolean;
+}
+const { title, description, image = "og/default.png", type = "website", jsonLd, noindex } = Astro.props;
+const site = Astro.site;
+const canonical = new URL(Astro.url.pathname, site ?? Astro.url).href;
+const fullTitle = title.includes("थाहा थियो?") ? title : `${title} | ${CHANNEL.display}`;
+const ogImage = abs(image, site);
+const orgLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: CHANNEL.display,
+  alternateName: ["थाहा थियो?", "Thaha Thiyo", CHANNEL.handle],
+  url: abs("", site),
+  logo: abs("icon-512.png", site),
+  sameAs: SOCIALS.map((s) => s.url),
+};
+const ld = [orgLd, ...(jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [])];
+---
+<!doctype html>
+<html lang="ne" data-lang="ne">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      // Language switch (ne | en | mix). Runs before paint so there is no flash; page swaps reset <html>, so re-apply after each.
+      (function () {
+        if (window.__lang) return window.__lang.apply();
+        var mem = null;
+        var get = function () { try { return localStorage.getItem("lang") || mem; } catch (e) { return mem; } };
+        var apply = function () {
+          var l = get();
+          if (l !== "en" && l !== "mix") l = "ne";
+          var h = document.documentElement;
+          h.dataset.lang = l;
+          h.lang = l === "en" ? "en" : "ne";
+          document.querySelectorAll("[data-set-lang]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.setLang === l)); });
+        };
+        window.__lang = { apply: apply };
+        apply();
+        document.addEventListener("DOMContentLoaded", apply);
+        document.addEventListener("astro:after-swap", apply);
+        document.addEventListener("click", function (e) {
+          var b = e.target.closest && e.target.closest("[data-set-lang]");
+          if (!b) return;
+          mem = b.dataset.setLang;
+          try { localStorage.setItem("lang", mem); } catch (err) {}
+          apply();
+        });
+      })();
+    </script>
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="theme-color" content="#1F2A6B" />
+    <link rel="icon" href={u("favicon.svg")} type="image/svg+xml" />
+    <link rel="icon" href={u("favicon-32.png")} sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href={u("apple-touch-icon.png")} />
+    <link rel="manifest" href={u("site.webmanifest")} />
+    <link rel="sitemap" href={u("sitemap-index.xml")} />
+    <link rel="preconnect" href="https://i.ytimg.com" />
+    <meta property="og:site_name" content={CHANNEL.display} />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content="ne_NP" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+    <ClientRouter />
+  </head>
+  <body>
+    <a class="skip" href="#main"><T ne="मुख्य सामग्रीमा जानुहोस्" en="Skip to content" mix="Main content मा जानुहोस्" /></a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

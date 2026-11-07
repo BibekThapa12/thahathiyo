@@ -1,0 +1,118 @@
+---
+// "Buy Thaha a cup of tea": eSewa/Khalti QR codes (+ Buy Me a Coffee when SUPPORT.bmcUrl is set).
+import { SUPPORT } from "../data/site";
+import { MascotBurst } from "./art/scenes";
+import TeaCup from "./TeaCup.astro";
+import T from "./T.astro";
+import { u } from "../lib/url";
+interface Props { full?: boolean }
+const { full = false } = Astro.props;
+---
+<section class="tea band" id="support" aria-labelledby="tea-h">
+  <div class="tea-top" aria-hidden="true"></div>
+  <div class="who" aria-hidden="true"><div class="m"><MascotBurst mood="point" /></div><TeaCup /></div>
+  <h2 id="tea-h"><T ne="थाहालाई एक कप चिया खुवाउनुहोस्" en="Buy Thaha a cup of tea" mix="थाहालाई एक cup चिया treat गर्नुस्" /></h2>
+  {full ? (
+    <p><T ne="थाहा थियो? एक जनाले बनाउने च्यानल हो। हरेक भिडियोमा अनुसन्धान, स्क्रिप्ट र चित्र बनाउन धेरै समय लाग्छ। भिडियो मन पर्‍यो भने एक कप चियाले अर्को तथ्य बनाउन मद्दत गर्छ।" en="Thaha Thiyo is made by one person. Every video takes research, a script and drawings. If you enjoy them, a cup of tea helps make the next fact." mix="थाहा थियो? one-person channel हो। हरेक video मा research, script र drawing मा धेरै time लाग्छ। Video मन पर्‍यो भने एक cup चियाले next fact बनाउन help गर्छ।" /></p>
+  ) : (
+    <p><T ne="भिडियो मन पर्‍यो? एक कप चियाले अर्को तथ्य बनाउन मद्दत गर्छ।" en="Enjoyed the video? A cup of tea helps make the next fact." mix="Video मन पर्‍यो? एक cup चियाले next fact बनाउन help गर्छ।" /></p>
+  )}
+  <ul class="qrs">
+    {SUPPORT.qrs.map((q) => (
+      <li class="qr">
+        <img src={u(q.src)} alt={`${q.name} QR`} width={q.width} height={q.height} loading="lazy" decoding="async" />
+        <span class="app"><i style={`background:${q.color}`}></i>{q.name}</span>
+      </li>
+    ))}
+  </ul>
+  <p class="scan"><T ne="eSewa वा Khalti एपले स्क्यान गर्नुहोस्" en="Scan with the eSewa or Khalti app" mix="eSewa वा Khalti app ले scan गर्नुस्" /></p>
+  {SUPPORT.bmcUrl && (
+    <a class="btn" href={SUPPORT.bmcUrl} target="_blank" rel="noopener"><TeaCup class="ico" /><T ne="विदेशबाट: Buy Me a Coffee" en="From abroad: Buy Me a Coffee" mix="Abroad बाट: Buy Me a Coffee" /></a>
+  )}
+</section>
+<style>
+  .tea {
+    border: var(--line) solid var(--ink);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 30px 18px 20px;
+    overflow: hidden;
+    max-width: 560px;
+  }
+  .tea-top {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 18px;
+    background: var(--tri) repeat-x;
+    background-size: 72px 18px;
+  }
+  .who {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .m {
+    width: 64px;
+  }
+  .who :global(.cup) {
+    width: 52px;
+  }
+  h2 {
+    color: var(--gold);
+    font-size: 1.35rem;
+    margin: 0 0 6px;
+  }
+  p {
+    margin: 0 0 14px;
+  }
+  /* each QR sits in a cream folk tile with a gold offset shadow */
+  .qrs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .qr {
+    width: 148px;
+    background: #fffaf0;
+    border: 3px solid var(--ink);
+    border-radius: 14px;
+    padding: 8px;
+    box-shadow: 4px 4px 0 var(--gold);
+    color: var(--ink);
+    text-align: center;
+  }
+  .qr img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: contain;
+    image-rendering: pixelated;
+  }
+  .app {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    font-weight: 800;
+    font-size: 0.9rem;
+  }
+  .app i {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--ink);
+  }
+  .scan {
+    margin: 14px 0 0;
+    font-size: 0.9rem;
+  }
+  .btn {
+    margin-top: 14px;
+  }
+</style>
