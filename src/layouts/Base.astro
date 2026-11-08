@@ -4,6 +4,7 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import T from "../components/T.astro";
 import { ClientRouter } from "astro:transitions";
+import Analytics from "@vercel/analytics/astro";
 import { CHANNEL, SOCIALS } from "../data/site";
 import { abs, u } from "../lib/url";
 
@@ -69,6 +70,7 @@ const ld = [orgLd, ...(jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : []
     <meta name="twitter:image" content={ogImage} />
     <script type="application/ld+json" set:html={JSON.stringify(ld)} />
     <ClientRouter />
+    <Analytics />
   </head>
   <body>
     <a class="skip" href="#main"><T ne="मुख्य सामग्रीमा जानुहोस्" en="Skip to content" mix="Main content मा जानुहोस्" /></a>
