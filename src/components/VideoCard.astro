@@ -1,6 +1,6 @@
 ---
 import type { Video } from "../lib/videos";
-import { platformLinks, topicOf } from "../lib/videos";
+import { platformLinks } from "../lib/videos";
 import SocialIcon from "./SocialIcon.astro";
 import { dateEn, dateNe, ne } from "../lib/format";
 import T from "./T.astro";
@@ -8,12 +8,12 @@ import { VideoArt } from "./art/scenes";
 import { u } from "../lib/url";
 interface Props { video: Video; eager?: boolean }
 const { video: v, eager = false } = Astro.props;
-const t = topicOf(v.topic);
 const join = (...p: (string | false)[]) => p.filter(Boolean).join(" · ");
+// number and date only: the topic made the line wrap on narrow cards (the topic chips cover it)
 const meta = {
-  ne: join(`#${ne(v.number)}`, t.ne, !!v.date && dateNe(v.date)),
-  en: join(`#${v.number}`, t.en, !!v.date && dateEn(v.date)),
-  mix: join(`#${ne(v.number)}`, t.mix, !!v.date && dateNe(v.date)),
+  ne: join(`#${ne(v.number)}`, !!v.date && dateNe(v.date)),
+  en: join(`#${v.number}`, !!v.date && dateEn(v.date)),
+  mix: join(`#${ne(v.number)}`, !!v.date && dateNe(v.date)),
 };
 ---
 <article class="vcard">

@@ -16,6 +16,7 @@ import T from "./T.astro";
       el.hidden = topic !== "all" && el.dataset.topicItem !== topic;
     });
     document.querySelectorAll<HTMLElement>("[data-filter]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.filter === topic)));
+    document.dispatchEvent(new Event("topic-filter")); // the home pager re-counts its pages
   };
   document.addEventListener("click", (e) => {
     const b = (e.target as Element | null)?.closest?.<HTMLElement>("[data-filter]");

@@ -26,7 +26,10 @@ const ARTS = ["mascot", "crow", "dog", "diya", "lake", "flag", "calendar", "cans
   <body>
     <header class="top">
       <a class="brand" href={u("")}>थाहा थियो? <span>videos</span></a>
-      <button class="link-btn" id="signout" type="button" hidden>Sign out</button>
+      <div class="top-links">
+        <a class="link-btn" href={u("")}>Homepage</a>
+        <button class="link-btn" id="signout" type="button" hidden>Sign out</button>
+      </div>
     </header>
 
     <main class="wrap">
@@ -433,6 +436,11 @@ const ARTS = ["mascot", "crow", "dog", "diya", "lake", "flag", "calendar", "cans
   }
   .top .link-btn {
     color: #fff;
+  }
+  .top-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
   }
   .wrap {
     max-width: 720px;

@@ -18,6 +18,15 @@ interface Props {
 const { title, description, image = "og/default.png", type = "website", jsonLd, noindex } = Astro.props;
 const site = Astro.site;
 const canonical = new URL(Astro.url.pathname, site ?? Astro.url).href;
+const isHome = Astro.url.pathname === u("");
+// Arriving on the home page: the old page lifts away, home rises in. Other pages keep Astro's crossfade.
+const homeRise = {
+  forwards: {
+    old: { name: "page-out", duration: "160ms", easing: "ease-in", fillMode: "both" },
+    new: { name: "home-rise", duration: "520ms", easing: "cubic-bezier(0.23, 1, 0.32, 1)", fillMode: "both" },
+  },
+};
+const mainAnim = isHome ? { ...homeRise, backwards: homeRise.forwards } : "fade";
 const fullTitle = title.includes("थाहा थियो?") ? title : `${title} | ${CHANNEL.display}`;
 const ogImage = abs(image, site);
 const orgLd = {
@@ -64,10 +73,26 @@ const ld = [orgLd, ...(jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : []
   <body>
     <a class="skip" href="#main"><T ne="मुख्य सामग्रीमा जानुहोस्" en="Skip to content" mix="Main content मा जानुहोस्" /></a>
     <Header />
-    <main id="main">
+    <main id="main" transition:name="page" transition:animate={mainAnim}>
       <slot />
     </main>
     <Footer />
+    <script>
+      // Back home after a page switch: the mascot logo gives a small hop, as if saying hello again.
+      document.addEventListener("astro:after-swap", () => {
+        if (location.pathname !== import.meta.env.BASE_URL || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        const o = "50% 90%";
+        document.querySelector(".site-header .brand svg")?.animate(
+          [
+            { transform: "none", transformOrigin: o },
+            { transform: "translateY(-7px) rotate(-10deg)", transformOrigin: o, offset: 0.35 },
+            { transform: "translateY(0) rotate(6deg)", transformOrigin: o, offset: 0.7 },
+            { transform: "none", transformOrigin: o },
+          ],
+          { duration: 620, delay: 140, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
+        );
+      });
+    </script>
     <script>
       // Cursor flow: small gold/red dots fall away from the pointer and fade. Mouse only, never with reduced motion.
       // One window listener (bundled module, runs once); dots live on <body>, so page swaps simply drop them.

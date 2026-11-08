@@ -426,3 +426,17 @@ button.chip:active {
     transform: scaleY(1.12) scaleX(0.94);
   }
 }
+
+/* page switch into the home page (Base.astro): content rises into place; the header stays still */
+@keyframes home-rise {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.985);
+  }
+}
+@keyframes page-out {
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}

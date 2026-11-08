@@ -4,12 +4,13 @@ import FollowButtons from "./FollowButtons.astro";
 import { u } from "../lib/url";
 import T from "./T.astro";
 const nav = [
+  { href: "", ne: "गृहपृष्ठ", en: "Home", mix: "Home" },
   { href: "#videos", ne: "भिडियो", en: "Videos", mix: "Videos" },
   { href: "#about", ne: "हाम्रो बारेमा", en: "About", mix: "हाम्रो About" },
   { href: "#support", ne: "चिया", en: "Support", mix: "चिया Support" },
 ];
 ---
-<header class="site-header">
+<header class="site-header" transition:name="site-header" transition:animate="none">
   <div class="wrap bar">
     <a class="brand" href={u("")} aria-label="Thaha Thiyo home">
       <LogoMark size={46} />

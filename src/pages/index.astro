@@ -18,6 +18,8 @@ const videos = await getVideos();
 const published = videos.filter((v) => v.status === "published");
 const latest = published.find((v) => v.youtubeId);
 const rest = videos.filter((v) => v !== latest);
+// the home board shows 6 cards at a time; the ‹ › pager pages through the rest
+const SHOWN = 6;
 ---
 <Base
   title="थाहा थियो? | Thaha Thiyo — Facts in Nepali, every day"
@@ -42,12 +44,21 @@ const rest = videos.filter((v) => v !== latest);
     <div class="wrap">
       <div class="vhead">
         <h2 id="videos-h"><T ne="भिडियो" en="Videos" mix="Videos" /></h2>
-        <TopicChips />
+        <div class="vtools">
+          <TopicChips />
+          {rest.length > SHOWN && (
+            <div class="pager" id="pager" role="group" aria-label="More videos">
+              <button type="button" class="pg" data-step="-1" aria-controls="board" aria-label="Newer videos" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg></button>
+              <span class="pg-n" aria-live="polite">1 / {Math.ceil(rest.length / SHOWN)}</span>
+              <button type="button" class="pg" data-step="1" aria-controls="board" aria-label="Older videos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg></button>
+            </div>
+          )}
+        </div>
       </div>
-      {videos.length ? (
-      <ul class="board">
+      {videos.length ? (<>
+      <ul class="board" id="board" data-topic-list>
       {latest && (
-        <li class="feature-cell" data-topic-item={latest.topic}>
+        <li class="feature-cell">{/* no data-topic-item: the newest video stays put whatever topic is picked */}
         <article class="feature" aria-labelledby="latest-h">
           <LiteYouTube id={latest.youtubeId} title={latest.titleEn || latest.titleNe} art={latest.art} eager />
           <div class="feature-copy">
@@ -60,9 +71,9 @@ const rest = videos.filter((v) => v !== latest);
         </article>
         </li>
       )}
-      {rest.map((v) => <li data-topic-item={v.topic}><VideoCard video={v} /></li>)}
+      {rest.map((v, i) => <li class={i >= SHOWN ? "extra" : undefined} data-topic-item={v.topic}><VideoCard video={v} /></li>)}
       </ul>
-      ) : (
+      </>) : (
         <div class="empty card"><MascotBurst mood="wonder" /><p><T ne="भिडियो छिट्टै आउँदैछन्!" en="Videos coming soon!" mix="Videos छिट्टै आउँदैछन्!" /></p></div>
       )}
     </div>
@@ -103,6 +114,39 @@ const rest = videos.filter((v) => v !== latest);
   <section class="section support-sec" aria-label="Support">
     <div class="wrap"><SupportCard full /></div>
   </section>
+<script>
+  // ‹ › pager for the home board: 6 cards a page, counted over the cards the topic filter left visible
+  const PAGE = 6;
+  let page = 0;
+  const parts = () => ({ board: document.getElementById("board"), pager: document.getElementById("pager") });
+  function render() {
+    const { board, pager } = parts();
+    if (!board || !pager) return;
+    board.dataset.paged = "";
+    const cards = [...board.querySelectorAll<HTMLElement>(":scope > li:not(.feature-cell)")].filter((li) => !li.hidden);
+    const pages = Math.max(1, Math.ceil(cards.length / PAGE));
+    page = Math.min(page, pages - 1);
+    cards.forEach((li, i) => li.classList.toggle("paged-out", Math.floor(i / PAGE) !== page));
+    pager.hidden = pages < 2;
+    pager.querySelector(".pg-n")!.textContent = `${page + 1} / ${pages}`;
+    const [prev, next] = pager.querySelectorAll("button");
+    prev.disabled = page === 0;
+    next.disabled = page === pages - 1;
+  }
+  document.addEventListener("click", (e) => {
+    const btn = (e.target as Element | null)?.closest?.<HTMLElement>("#pager [data-step]");
+    if (!btn) return;
+    page += Number(btn.dataset.step);
+    render();
+    parts().board?.querySelectorAll(":scope > li:not(.feature-cell):not(.paged-out)").forEach((li) => {
+      li.classList.remove("enter");
+      void (li as HTMLElement).offsetWidth; // restart the entrance animation
+      li.classList.add("enter");
+    });
+  });
+  document.addEventListener("topic-filter", () => { page = 0; render(); });
+  document.addEventListener("astro:page-load", () => { page = 0; render(); });
+</script>
 </Base>
 
 <style>
@@ -197,6 +241,79 @@ const rest = videos.filter((v) => v !== latest);
   }
   /* the board: featured card + video cards share one grid (phone 2, tablet 3, desktop featured-left + 3).
      Compact on purpose: the whole section fits one 1440x900 screen. */
+  /* paging: the server shows page 1 (.extra hidden); once the script runs it hides by .paged-out */
+  .board:not([data-paged]) > .extra,
+  .board > .paged-out {
+    display: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .board > .enter {
+      animation: card-in 260ms var(--ease-out);
+    }
+  }
+  @keyframes card-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+  /* "See all" sits beside the topic chips so it adds no height to the one-screen section */
+  .vtools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 16px;
+  }
+  .pager {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pager[hidden] {
+    display: none;
+  }
+  .pg {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    color: var(--ink);
+    background: var(--cream);
+    border: 2px solid var(--ink);
+    border-radius: 50%;
+    box-shadow: 2px 2px 0 var(--ink);
+    transition: transform 120ms var(--ease-out), background-color 150ms ease;
+  }
+  .pg svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .pg:not(:disabled):hover {
+      background: var(--gold);
+    }
+  }
+  .pg:not(:disabled):active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 var(--ink);
+  }
+  .pg:disabled {
+    opacity: 0.35;
+    box-shadow: none;
+    cursor: default;
+  }
+  .pg-n {
+    min-width: 4ch;
+    text-align: center;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
   .board {
     list-style: none;
     margin: 0;
