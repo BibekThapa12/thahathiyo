@@ -70,6 +70,12 @@ const ld = [orgLd, ...(jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : []
     <meta name="twitter:image" content={ogImage} />
     <script type="application/ld+json" set:html={JSON.stringify(ld)} />
     <ClientRouter />
+    <script is:inline>
+      // Owner's visits don't count: /admin marks the browser on sign-in, and analytics drops its events.
+      // Queued for Vercel's script, which replays window.vaq when it loads.
+      window.va = window.va || function (...a) { (window.vaq = window.vaq || []).push(a); };
+      window.va("beforeSend", (e) => { try { return localStorage.getItem("thaha-no-track") ? null : e; } catch { return e; } });
+    </script>
     <Analytics />
   </head>
   <body>

@@ -27,6 +27,10 @@ const ARTS = ["mascot", "crow", "dog", "diya", "lake", "flag", "calendar", "cans
     <header class="top">
       <a class="brand" href={u("")}>थाहा थियो? <span>videos</span></a>
       <div class="top-links">
+        <nav class="tabs" id="tabs" aria-label="Dashboard" hidden>
+          <button class="link-btn tab" type="button" data-tab="list">Videos</button>
+          <button class="link-btn tab" type="button" data-tab="stats">Stats</button>
+        </nav>
         <a class="link-btn" href={u("")}>Homepage</a>
         <button class="link-btn" id="signout" type="button" hidden>Sign out</button>
       </div>
@@ -124,6 +128,61 @@ const ARTS = ["mascot", "crow", "dog", "diya", "lake", "flag", "calendar", "cans
           </div>
         </form>
       </section>
+      <!-- 4. website stats (Vercel Web Analytics API) -->
+      <section id="stats" hidden>
+        <div class="list-head">
+          <h1>Website stats</h1>
+          <div class="range" role="group" aria-label="Date range">
+            <button type="button" class="range-btn" data-days="7" aria-pressed="true">7 days</button>
+            <button type="button" class="range-btn" data-days="30" aria-pressed="false">30 days</button>
+          </div>
+        </div>
+        <p class="hint">Your own visits aren't counted: signing in here marks this browser as yours.</p>
+
+        <div id="vc-connect" hidden>
+          <p class="lead">Connect Vercel once to see your visitors here. Your browser remembers it after that.</p>
+          <ol class="steps">
+            <li><a class="btn ghost" href="https://vercel.com/account/settings/tokens" target="_blank" rel="noopener">Create a Vercel token ↗</a></li>
+            <li>Name it <b>Thaha dashboard</b>, pick the scope that holds the <b>thahathiyo</b> project, set an expiry, then press <b>Create</b> and copy it.</li>
+            <li>
+              <form id="vc-form" class="row">
+                <label class="sr" for="vc-token">Vercel token</label>
+                <input id="vc-token" type="password" autocomplete="off" placeholder="Paste the Vercel token here" required />
+                <button class="btn" type="submit">Connect</button>
+              </form>
+            </li>
+          </ol>
+        </div>
+
+        <p class="msg" id="stats-msg" role="status"></p>
+
+        <div id="stats-body" hidden>
+          <div class="tiles">
+            <div class="tile"><span class="tile-n" id="t-visitors">–</span><span class="tile-l" id="t-visitors-l">Visitors</span></div>
+            <div class="tile"><span class="tile-n" id="t-views">–</span><span class="tile-l">Page views</span></div>
+            <div class="tile"><span class="tile-n small" id="t-source">–</span><span class="tile-l">Top source</span></div>
+          </div>
+
+          <div class="card">
+            <h2>Page views per day</h2>
+            <div class="chart">
+              <span class="ymax" id="ymax"></span>
+              <div class="bars" id="daily"></div>
+              <div class="tip" id="tip" role="tooltip" hidden></div>
+            </div>
+            <div class="xlabels" id="xlabels"></div>
+            <details class="table-view"><summary>Show as table</summary><table><thead><tr><th>Day</th><th>Page views</th><th>Visitors</th></tr></thead><tbody id="daily-table"></tbody></table></details>
+          </div>
+
+          <div class="grid2">
+            <div class="card"><h2>Most viewed pages</h2><ol class="rank" id="r-pages"></ol></div>
+            <div class="card"><h2>Where visitors come from</h2><ol class="rank" id="r-refs"></ol></div>
+            <div class="card"><h2>Countries</h2><ol class="rank" id="r-countries"></ol></div>
+            <div class="card"><h2>Devices</h2><ol class="rank" id="r-devices"></ol></div>
+          </div>
+          <button class="link-btn" id="vc-disconnect" type="button">Disconnect Vercel</button>
+        </div>
+      </section>
     </main>
 
     {LINKS.map((l) => <template id={`ico-${l.id}`}><SocialIcon id={l.id} /></template>)}
@@ -158,9 +217,11 @@ const ARTS = ["mascot", "crow", "dog", "diya", "lake", "flag", "calendar", "cans
     encode: (s: string) => { let bin = ""; new TextEncoder().encode(s).forEach((b) => (bin += String.fromCharCode(b))); return btoa(bin); },
   };
 
-  function show(id: "signin" | "list" | "edit") {
-    for (const s of ["signin", "list", "edit"]) $("#" + s).hidden = s !== id;
-    $("#signout").hidden = id === "signin";
+  function show(id: "signin" | "list" | "edit" | "stats") {
+    for (const s of ["signin", "list", "edit", "stats"]) $("#" + s).hidden = s !== id;
+    $("#signout").hidden = $("#tabs").hidden = id === "signin";
+    const tab = id === "stats" ? "stats" : "list";
+    document.querySelectorAll<HTMLElement>(".tab").forEach((t) => t.toggleAttribute("aria-current", t.dataset.tab === tab));
     scrollTo(0, 0);
   }
   function el<K extends keyof HTMLElementTagNameMap>(tag: K, props: Record<string, any> = {}, ...kids: (Node | string)[]) {
@@ -210,6 +271,7 @@ const ARTS = ["mascot", "crow", "dog", "diya", "lake", "flag", "calendar", "cans
     show("list");
     try {
       videos = (await load()).list;
+      try { localStorage.setItem("thaha-no-track", "1"); } catch {} // the site's analytics skips this browser (Base.astro)
       $("#list-msg").textContent = "";
       renderList();
     } catch (e: any) {
@@ -389,6 +451,189 @@ const ARTS = ["mascot", "crow", "dog", "diya", "lake", "flag", "calendar", "cans
     const v = editing;
     if (!v || !confirm(`Delete “${v.titleEn}” from the website?\n\nIt disappears from the site in about a minute. GitHub keeps the old version in its history.`)) return;
     run(() => commit((list) => list.filter((x) => x.slug !== v.slug), `Delete video #${v.number}: ${v.titleEn}`), `Deleted “${v.titleEn}”.`);
+  });
+
+  // ---- website stats: Vercel Web Analytics API, called from the browser with the owner's Vercel token ----
+  const V = "https://api.vercel.com";
+  const VKEY = "thaha-vercel-token";
+  const VPROJ = "thaha-vercel-project"; // { projectId, teamId? }, found once from the project name
+  const PROJECT = "thahathiyo";
+  const ls = {
+    get: (k: string) => { try { return localStorage.getItem(k) ?? ""; } catch { return ""; } },
+    set: (k: string, v: string) => { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch {} },
+  };
+  class VcError extends Error {}
+  let days = 7;
+  let statsFor = ""; // "7" / "30" once loaded, so switching tabs doesn't refetch
+
+  async function vget(path: string, params: Record<string, string | number> = {}, soft = false) {
+    const q = new URLSearchParams(Object.entries(params).map(([k, v]) => [k, String(v)]));
+    const res = await fetch(`${V}${path}${q.size ? "?" + q : ""}`, { headers: { Authorization: `Bearer ${ls.get(VKEY)}` }, cache: "no-store" });
+    if (res.status === 401) throw new VcError("Vercel didn't accept that token. It may be mistyped or expired: create a new one.");
+    if (soft && (res.status === 403 || res.status === 404)) return null;
+    if (!res.ok) {
+      const msg = (await res.json().catch(() => null))?.error?.message;
+      throw new VcError(msg ? `Vercel said: “${msg}”` : `Vercel said “${res.status} ${res.statusText}”. Try again in a minute.`);
+    }
+    return res.json();
+  }
+  // Personal projects need no teamId; team projects (including Hobby's default team) do, so try each team.
+  async function project(): Promise<{ projectId: string; teamId?: string }> {
+    try { const c = JSON.parse(ls.get(VPROJ)); if (c?.projectId) return c; } catch {}
+    let found: { projectId: string; teamId?: string } | null = null;
+    const own = await vget(`/v9/projects/${PROJECT}`, {}, true);
+    if (own) found = { projectId: own.id };
+    else {
+      for (const t of (await vget("/v2/teams", {}, true))?.teams ?? []) {
+        const p = await vget(`/v9/projects/${PROJECT}`, { teamId: t.id }, true);
+        if (p) { found = { projectId: p.id, teamId: t.id }; break; }
+      }
+    }
+    if (!found) throw new VcError(`This token can't see a Vercel project called “${PROJECT}”. Make a token whose scope includes that project.`);
+    ls.set(VPROJ, JSON.stringify(found));
+    return found;
+  }
+  async function visits(params: Record<string, string | number>) {
+    const p = await project();
+    return (await vget("/v1/query/web-analytics/visits/aggregate", { ...p, ...params })).data;
+  }
+
+  const fmt = (n: number) => (n ?? 0).toLocaleString("en");
+  const isoDay = (d: Date) => d.toISOString().slice(0, 10);
+  const regions = (() => { try { return new Intl.DisplayNames(["en"], { type: "region" }); } catch { return null; } })();
+  const pageName = (path: string) => {
+    if (!path || path === "/") return "Homepage";
+    const slug = path.match(/^\/videos\/([^/]+)\/?$/)?.[1];
+    const v = slug && videos.find((x) => x.slug === slug);
+    return v ? v.titleEn || v.titleNe : path;
+  };
+  const label = {
+    requestPath: pageName,
+    referrerHostname: (h: string) => (h ? h.replace(/^www\./, "") : "Direct or unknown"),
+    country: (c: string) => (c ? regions?.of(c) ?? c : "Unknown"),
+    deviceType: (d: string) => (d ? d[0].toUpperCase() + d.slice(1) : "Unknown"),
+  } as Record<string, (v: string) => string>;
+
+  function rank(id: string, by: string, rows: any[]) {
+    const ol = $("#" + id);
+    const items = (rows ?? []).filter((r) => r.pageviews > 0);
+    const max = Math.max(1, ...items.map((r) => r.pageviews));
+    ol.replaceChildren(...(items.length ? items.map((r) => {
+      const bar = el("span", { className: "rank-bar" });
+      bar.style.width = `${(r.pageviews / max) * 100}%`;
+      return el("li", {}, el("span", { className: "rank-name" }, label[by](r[by] ?? "")), el("span", { className: "rank-n" }, fmt(r.pageviews)), bar);
+    }) : [el("li", { className: "empty" }, "No visits yet in this range")]));
+  }
+
+  function chart(rows: any[], since: Date) {
+    const byDay = new Map((rows ?? []).map((r) => [String(r.timestamp).slice(0, 10), r]));
+    const series = Array.from({ length: days }, (_, i) => {
+      const d = new Date(since.getTime() + i * 86400000);
+      const r = byDay.get(isoDay(d));
+      return { day: d, views: r?.pageviews ?? 0, visitors: r?.visitors ?? 0 };
+    });
+    const max = Math.max(1, ...series.map((s) => s.views));
+    const nice = (d: Date) => d.toLocaleDateString("en", { day: "numeric", month: "short", timeZone: "UTC" });
+    const tip = $("#tip");
+    $("#ymax").textContent = `${fmt(max)} views`;
+    $("#daily").replaceChildren(...series.map((s) => {
+      const text = `${nice(s.day)}: ${fmt(s.views)} page views, ${fmt(s.visitors)} visitors`;
+      const col = el("span", { className: "col", tabIndex: 0, role: "img", ariaLabel: text });
+      const bar = el("span", { className: "bar" });
+      bar.style.height = s.views ? `${Math.max(2, (s.views / max) * 100)}%` : "0";
+      col.append(bar);
+      const on = () => {
+        tip.textContent = text;
+        tip.hidden = false;
+        const box = col.parentElement!.getBoundingClientRect(), c = col.getBoundingClientRect();
+        tip.style.left = `${Math.min(Math.max(c.left - box.left + c.width / 2, 90), box.width - 90)}px`;
+      };
+      col.addEventListener("pointerenter", on);
+      col.addEventListener("focus", on);
+      col.addEventListener("pointerleave", () => (tip.hidden = true));
+      col.addEventListener("blur", () => (tip.hidden = true));
+      return col;
+    }));
+    const mid = series[Math.floor(series.length / 2)].day;
+    $("#xlabels").replaceChildren(...[series[0].day, mid, series[series.length - 1].day].map((d) => el("span", {}, nice(d))));
+    $("#daily-table").replaceChildren(...series.map((s) => el("tr", {}, el("td", {}, nice(s.day)), el("td", {}, fmt(s.views)), el("td", {}, fmt(s.visitors)))));
+    return series;
+  }
+
+  async function loadStats(force = false) {
+    const connected = !!ls.get(VKEY);
+    $("#vc-connect").hidden = connected;
+    $("#stats-body").hidden = !connected || !statsFor;
+    if (!connected || (!force && statsFor === String(days))) return;
+    const msg = $("#stats-msg");
+    msg.className = "msg";
+    msg.textContent = "Loading stats…";
+    const until = new Date(todayNepal() + "T00:00:00Z");
+    const since = new Date(until.getTime() - (days - 1) * 86400000);
+    const range = { since: isoDay(since), until: isoDay(until) };
+    try {
+      const [daily, total, pages, refs, countries, devices] = await Promise.all([
+        visits({ ...range, by: "day" }),
+        visits(range).catch(() => null), // a total without grouping; summed from days if Vercel needs a group
+        visits({ ...range, by: "requestPath", limit: 8 }),
+        visits({ ...range, by: "referrerHostname", limit: 6 }),
+        visits({ ...range, by: "country", limit: 6 }),
+        visits({ ...range, by: "deviceType", limit: 4 }),
+      ]);
+      const series = chart(daily, since);
+      const t = Array.isArray(total) ? total[0] : total;
+      const sum = (k: "views" | "visitors") => series.reduce((a, s) => a + s[k], 0);
+      $("#t-views").textContent = fmt(t?.pageviews ?? sum("views"));
+      $("#t-visitors").textContent = fmt(t?.visitors ?? sum("visitors"));
+      $("#t-visitors-l").textContent = t ? "Visitors" : "Visitors (daily, added up)";
+      const top = (refs ?? []).find((r: any) => r.pageviews > 0);
+      $("#t-source").textContent = top ? label.referrerHostname(top.referrerHostname) : "–";
+      rank("r-pages", "requestPath", pages);
+      rank("r-refs", "referrerHostname", refs);
+      rank("r-countries", "country", countries);
+      rank("r-devices", "deviceType", devices);
+      statsFor = String(days);
+      msg.textContent = "";
+      $("#stats-body").hidden = false;
+    } catch (e: any) {
+      msg.className = "msg err";
+      msg.textContent = e instanceof VcError ? e.message : "Couldn't reach Vercel. Check your internet and try again.";
+    }
+  }
+
+  document.querySelectorAll<HTMLElement>(".tab").forEach((t) => t.addEventListener("click", () => {
+    if (!$("#edit").hidden && dirty && !confirm("You have unsaved changes. Leave without saving?")) return;
+    dirty = false;
+    if (t.dataset.tab === "stats") {
+      show("stats");
+      loadStats();
+    } else {
+      renderList();
+      show("list");
+    }
+  }));
+  document.querySelectorAll<HTMLButtonElement>(".range-btn").forEach((b) => b.addEventListener("click", () => {
+    days = Number(b.dataset.days);
+    document.querySelectorAll(".range-btn").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    loadStats();
+  }));
+  $("#vc-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    ls.set(VKEY, $<HTMLInputElement>("#vc-token").value.trim());
+    ls.set(VPROJ, "");
+    statsFor = "";
+    loadStats(true).then(() => {
+      if (!$("#stats-body").hidden) return;
+      ls.set(VKEY, ""); // didn't work: forget it and show the connect steps again, with the error above them
+      $("#vc-connect").hidden = false;
+    });
+  });
+  $("#vc-disconnect").addEventListener("click", () => {
+    ls.set(VKEY, "");
+    ls.set(VPROJ, "");
+    statsFor = "";
+    $<HTMLInputElement>("#vc-token").value = "";
+    loadStats();
   });
 
   start();
@@ -780,7 +1025,219 @@ const ARTS = ["mascot", "crow", "dog", "diya", "lake", "flag", "calendar", "cans
     opacity: 0.22;
   }
 
+  /* dashboard tabs in the top bar */
+  .tabs {
+    display: flex;
+    gap: 16px;
+    padding-right: 16px;
+    border-right: 2px solid rgba(255, 255, 255, 0.3);
+  }
+  .tab[aria-current] {
+    color: var(--gold) !important;
+    text-decoration-thickness: 3px;
+  }
+
+  /* stats */
+  .range {
+    display: flex;
+    gap: 8px;
+  }
+  .range-btn {
+    min-height: 44px;
+    padding: 0 16px;
+    font: inherit;
+    font-weight: 700;
+    color: var(--ink);
+    background: #fffdf7;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    cursor: var(--cursor-link);
+  }
+  .range-btn[aria-pressed="true"] {
+    background: var(--gold);
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin: 8px 0 16px;
+  }
+  .tile,
+  .card {
+    background: #fffaf0;
+    border: 2px solid var(--ink);
+    border-radius: var(--radius);
+  }
+  .tile {
+    display: grid;
+    gap: 2px;
+    padding: 14px 16px;
+  }
+  .tile-n {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+  }
+  .tile-n.small {
+    font-size: 1.3rem;
+  }
+  .tile-l {
+    font-size: 0.92rem;
+    color: #4a4a4a;
+  }
+  .card {
+    padding: 14px 16px 16px;
+    margin-bottom: 16px;
+  }
+  .card h2 {
+    font-size: 1.1rem;
+    margin: 0 0 12px;
+  }
+  .chart {
+    position: relative;
+    padding-top: 22px;
+  }
+  .ymax {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 0.8rem;
+    color: #5a5a5a;
+  }
+  .bars {
+    display: flex;
+    align-items: stretch;
+    height: 160px;
+    border-bottom: 2px solid var(--ink);
+    background: repeating-linear-gradient(to top, transparent 0 39px, rgba(17, 17, 17, 0.07) 39px 40px);
+  }
+  /* the whole column is the hover target, wider and taller than the bar it holds */
+  .col {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    padding: 0 1px; /* 2px surface gap between neighbouring bars */
+    outline-offset: -2px;
+  }
+  .bar {
+    width: 100%;
+    background: var(--indigo);
+    border-radius: 4px 4px 0 0;
+  }
+  .col:hover .bar,
+  .col:focus-visible .bar {
+    background: var(--indigo-2);
+  }
+  .tip {
+    position: absolute;
+    top: -6px;
+    transform: translateX(-50%);
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    white-space: nowrap;
+    color: #fff;
+    background: var(--ink);
+    border-radius: 8px;
+    pointer-events: none;
+  }
+  .xlabels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-size: 0.8rem;
+    color: #5a5a5a;
+  }
+  .table-view {
+    margin-top: 10px;
+    font-size: 0.9rem;
+  }
+  .table-view summary {
+    font-weight: 700;
+    cursor: var(--cursor-link);
+  }
+  .table-view table {
+    width: 100%;
+    margin-top: 8px;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+  .table-view th,
+  .table-view td {
+    text-align: left;
+    padding: 4px 6px;
+    border-bottom: 1px solid rgba(17, 17, 17, 0.15);
+  }
+  .grid2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 16px;
+  }
+  .rank {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .rank li {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 10px;
+    font-size: 0.95rem;
+  }
+  .rank-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .rank-n {
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+  .rank-bar {
+    grid-column: 1 / -1;
+    height: 6px;
+    background: var(--indigo);
+    border-radius: 0 4px 4px 0;
+  }
+  .rank .empty {
+    color: #5a5a5a;
+    display: block;
+  }
+
   @media (max-width: 560px) {
+    .tiles {
+      grid-template-columns: 1fr 1fr;
+    }
+    .tiles .tile:last-child {
+      grid-column: 1 / -1;
+    }
+    .grid2 {
+      grid-template-columns: 1fr;
+    }
+    .tabs {
+      gap: 12px;
+      padding-right: 12px;
+    }
+    /* phones: brand on its own row, links in a row underneath */
+    .top {
+      flex-wrap: wrap;
+      gap: 4px;
+      padding: 10px 16px 6px;
+    }
+    .top-links {
+      width: 100%;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .top .link-btn {
+      white-space: nowrap;
+    }
     h1 {
       font-size: 1.6rem;
     }
