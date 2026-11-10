@@ -535,5 +535,55 @@
         "url": "https://www.onlinekhabar.com/2017/10/633410"
       }
     ]
+  },
+  {
+    "slug": "why-nepal-time-is-utc-5-45-shorts",
+    "number": 11,
+    "titleNe": "",
+    "titleEn": "नेपालको समय किन ५:४५? ⏰🇳🇵 संसारभन्दा १५ मिनेट फरक! | Why Nepal Time Is UTC+5:45 #shorts",
+    "date": "2026-11-10",
+    "topic": "science",
+    "youtubeId": "",
+    "tiktokUrl": "",
+    "instagramUrl": "",
+    "facebookUrl": "",
+    "description": "",
+    "descriptionEn": "नेपालको समय संसारका अरू देशभन्दा १५ मिनेट फरक किन छ? गौरीशंकर हिमाल हुँदै जाने ८६°१५′ पूर्व देशान्तर रेखा, भारतभन्दा १५ मिनेट अगाडि, र पूरै देशले ४५ मिनेटको समय चलाउने संसारको एक मात्र देश। 👆\nWhy is Nepal's time zone UTC+5:45, fifteen minutes off from the rest of the world? It is measured from the meridian through Mount Gaurishankar, and Nepal is the only country on a 45-minute offset.",
+    "facts": [
+      {
+        "ne": "",
+        "en": "Nepal Standard Time (NPT) is UTC+5:45. Nepal does not use daylight saving time.\nAlmost every country's time zone is a whole hour or a half hour from UTC; a 45-minute offset is very rare."
+      },
+      {
+        "ne": "",
+        "en": "Nepal's time is based on the meridian 86°15′ East, which passes through the peak of Gaurishankar (7,134 m), a Himalayan mountain about 100 km north-east of Kathmandu. 86°15′ East works out to exactly 5 hours 45 minutes ahead of UTC (each 15° of longitude is one hour)."
+      },
+      {
+        "ne": "",
+        "en": "Before the change, Nepal used the same time as India (UTC+5:30). Today Nepal is 15 minutes ahead of India. Sources disagree on the year Nepal moved its clocks 15 minutes ahead: some give 1986 (2042 BS), others 1956. The video does not state a year."
+      },
+      {
+        "ne": "",
+        "en": "Only three time zones in the world use a 45-minute offset: Nepal (UTC+5:45), New Zealand's Chatham Islands (UTC+12:45), and an unofficial zone around Eucla in Western Australia (UTC+8:45)."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Nepal Time Zone: Why It Is UTC+5:45 (Geography Worlds)",
+        "url": "https://geographyworlds.com/blog/nepal-time-zone-quirk/"
+      },
+      {
+        "title": "Nepal Time (NPT): A Unique Time Zone in the Himalayas (Actual Adventure)",
+        "url": "https://www.actual-adventure.com/nepal-information/nepal-time-npt"
+      },
+      {
+        "title": "UTC+05:45 (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/UTC%2B05:45"
+      },
+      {
+        "title": "Time Zone in Nepal (timeanddate.com)",
+        "url": "https://timeanddate.com/time/zone/nepal"
+      }
+    ]
   }
 ]
