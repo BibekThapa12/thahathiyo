@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import raw from "../data/videos.json";
 import { CHANNEL, SOCIALS, TOPICS, type Platform, type TopicId } from "../data/site";
+import { guessTopic } from "./videoMd";
 
 export type Fact = { ne: string; en: string };
 export type Source = { title: string; url: string };
@@ -96,14 +97,6 @@ export function splitTitle(title: string): { ne: string; en: string } {
   const isDev = (s: string) => /[ऀ-ॿ]/.test(s);
   if (b) return isDev(a) ? { ne: a, en: b } : { ne: b, en: a };
   return isDev(a) ? { ne: a, en: "" } : { ne: a, en: a };
-}
-
-export function guessTopic(text: string): TopicId {
-  const s = text.toLowerCase();
-  if (/(तिहार|दशैं|दशैँ|चाड|पर्व|पूजा|tihar|dashain|festival|holi|chhath|losar)/.test(s)) return "festivals";
-  if (/(ब्रान्ड|ब्यापार|व्यापार|कम्पनी|business|brand|company|market|case study)/.test(s)) return "business";
-  if (/(विज्ञान|दिमाग|science|brain|space|planet|lake|earthquake|भूकम्प)/.test(s)) return "science";
-  return "history";
 }
 
 const slugify = (s: string) =>

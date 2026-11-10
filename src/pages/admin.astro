@@ -69,6 +69,14 @@ const ARTS = ["mascot", "crow", "dog", "diya", "lake", "flag", "calendar", "cans
       <section id="edit" hidden>
         <button class="link-btn back" id="back" type="button">← All videos</button>
         <h1 id="edit-h">New video</h1>
+        <div class="import">
+          <label class="btn ghost small import-btn">
+            Import from MD file
+            <input id="md-file" class="sr" type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" />
+          </label>
+          <span class="hint">Fills the title, description, facts and sources from the video's .md file. You can also drop the file anywhere on this page.</span>
+        </div>
+        <p class="msg" id="import-msg" role="status"></p>
         <form id="form" novalidate>
           <fieldset>
             <legend>About the video</legend>
@@ -191,6 +199,7 @@ const ARTS = ["mascot", "crow", "dog", "diya", "lake", "flag", "calendar", "cans
 
 <script>
   import { dateEn, todayNepal } from "../lib/format";
+  import { parseVideoMd, cleanLink, cleanTitle } from "../lib/videoMd";
 
   type Entry = Record<string, any> & { slug: string; number: number; titleEn: string };
   const REPO = "BibekThapa12/thahathiyo";
@@ -367,10 +376,80 @@ const ARTS = ["mascot", "crow", "dog", "diya", "lake", "flag", "calendar", "cans
     $("#edit-h").textContent = v ? `Edit video #${v.number}` : "New video";
     $("#delete").hidden = !v;
     $("#save-msg").textContent = "";
+    $("#import-msg").textContent = "";
     (form.querySelector("details") as HTMLDetailsElement).open = false;
     dirty = false;
     show("edit");
   }
+
+  // ---- import from the video's production MD file ("10 MD Files/NN - Name.md") ----
+  const norm = (s = "") => cleanTitle(s).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+  // the same video may already be on the site, e.g. added by the daily YouTube save: match by number, then by English title
+  function existingFor(md: ReturnType<typeof parseVideoMd>) {
+    const en = norm(md.titleEn.split("|").pop());
+    return videos.find((x) => md.number && x.number === md.number) ?? videos.find((x) => en.length > 8 && norm(`${x.titleEn} ${x.titleNe}`).includes(en));
+  }
+  async function importMd(file: File) {
+    const msg = $("#import-msg");
+    const fail = (t: string) => { msg.className = "msg err"; msg.textContent = t; };
+    if (!/\.(md|markdown|txt)$/i.test(file.name)) return fail(`“${file.name}” isn't an .md file. Pick the video's file from “10 MD Files”.`);
+    const md = parseVideoMd(await file.text());
+    if (!md.facts.length && !md.sources.length) return fail(`“${file.name}” doesn't look like a video file: it has no “## Facts” or “## Sources”.`);
+
+    let note = "";
+    if (!editing) {
+      const ex = existingFor(md);
+      if (ex) {
+        openEditor(ex);
+        note = ` Video #${ex.number} was already on the site, so the file filled in that entry instead of making a copy.`;
+      }
+    } else if (md.number && editing.number !== md.number && !confirm(`This file is for video #${md.number}, but you're editing #${editing.number}. Fill it in anyway?`)) return;
+    const had = $("#facts").children.length + $("#sources").children.length;
+    if (had && !confirm("Replace the facts and sources already in this form with the ones from the file?")) return;
+
+    const set = (k: string, v: string | number | undefined) => { const f = field(k); if (f && v !== undefined && v !== "") f.value = String(v); };
+    set("titleEn", md.titleEn);
+    set("titleNe", md.titleNe);
+    set("descriptionEn", md.descriptionEn);
+    set("description", md.description);
+    if (!editing) set("number", md.number);
+    if (md.topicFromFile || !form.querySelector("input[name=topic]:checked"))
+      form.querySelectorAll<HTMLInputElement>("input[name=topic]").forEach((r) => (r.checked = r.value === md.topic));
+    $("#facts").replaceChildren(...md.facts.map(factRow));
+    $("#sources").replaceChildren(...md.sources.map(sourceRow));
+    dirty = true;
+
+    const left = md.skipped.length ? ` Left out ${md.skipped.length} note${md.skipped.length === 1 ? "" : "s"} that ${md.skipped.length === 1 ? "isn't a fact" : "aren't facts"} (“Imagination…”, “Background…”).` : "";
+    msg.className = "msg ok";
+    msg.textContent = `Filled in from “${file.name}”: ${md.facts.length} facts, ${md.sources.length} sources.${left}${note} Now check the topic, paste the app links and press Save.${md.warnings.length ? "\nHeads up: " + md.warnings.join(" ") : ""}`;
+  }
+  const picker = $<HTMLInputElement>("#md-file");
+  picker.addEventListener("change", () => {
+    const f = picker.files?.[0];
+    picker.value = ""; // picking the same file again still fires
+    if (f) importMd(f);
+  });
+  // drop a .md file on the list (starts a new video) or on the form
+  const canDrop = () => !$("#list").hidden || !$("#edit").hidden;
+  addEventListener("dragover", (e) => {
+    if (!canDrop() || !e.dataTransfer?.types.includes("Files")) return;
+    e.preventDefault();
+    document.body.classList.add("dropping");
+  });
+  addEventListener("dragleave", (e) => { if (!e.relatedTarget) document.body.classList.remove("dropping"); });
+  addEventListener("drop", (e) => {
+    document.body.classList.remove("dropping");
+    const f = e.dataTransfer?.files?.[0];
+    if (!canDrop() || !f) return;
+    e.preventDefault();
+    if (!$("#list").hidden) openEditor(null);
+    importMd(f);
+  });
+  // tidy pasted app links right away, so what you see is what gets saved
+  for (const k of ["tiktokUrl", "instagramUrl", "facebookUrl"]) field(k)?.addEventListener("change", (e) => {
+    const i = e.target as HTMLInputElement;
+    i.value = cleanLink(i.value);
+  });
   form.addEventListener("input", () => (dirty = true));
   $("#back").addEventListener("click", () => {
     if (dirty && !confirm("You have unsaved changes. Leave without saving?")) return;
@@ -401,7 +480,7 @@ const ARTS = ["mascot", "crow", "dog", "diya", "lake", "flag", "calendar", "cans
     const next: Entry = {
       ...(editing ?? {}), // keeps any field this form doesn't show
       slug, number, titleNe: val("titleNe"), titleEn, date: val("date"), topic,
-      youtubeId: ytId(val("youtubeId")), tiktokUrl: val("tiktokUrl"), instagramUrl: val("instagramUrl"), facebookUrl: val("facebookUrl"),
+      youtubeId: ytId(val("youtubeId")), tiktokUrl: cleanLink(val("tiktokUrl")), instagramUrl: cleanLink(val("instagramUrl")), facebookUrl: cleanLink(val("facebookUrl")),
       description: val("description"), descriptionEn: val("descriptionEn"),
       facts: [...$("#facts").children].map((li) => ({ ne: (li as any).ne ?? "", en: li.querySelector("textarea")!.value.trim() })).filter((f) => f.en || f.ne),
       sources,
@@ -1023,6 +1102,39 @@ const ARTS = ["mascot", "crow", "dog", "diya", "lake", "flag", "calendar", "cans
   }
   .app.off {
     opacity: 0.22;
+  }
+
+  /* import from MD file */
+  .import {
+    display: flex;
+    align-items: center;
+    gap: 8px 14px;
+    flex-wrap: wrap;
+    margin: 4px 0 4px;
+  }
+  .import .hint {
+    flex: 1 1 260px;
+    margin: 0;
+  }
+  .import-btn {
+    margin: 0;
+    display: inline-flex;
+    cursor: var(--cursor-link);
+  }
+  .import-btn:focus-within {
+    outline: 4px solid var(--indigo);
+    outline-offset: 2px;
+  }
+  #import-msg {
+    white-space: pre-line;
+  }
+  .msg.ok {
+    color: var(--teal-2);
+  }
+  .dropping main {
+    outline: 3px dashed var(--indigo);
+    outline-offset: 6px;
+    border-radius: 12px;
   }
 
   /* dashboard tabs in the top bar */
