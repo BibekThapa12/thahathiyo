@@ -585,5 +585,59 @@
         "url": "https://timeanddate.com/time/zone/nepal"
       }
     ]
+  },
+  {
+    "slug": "what-if-nepal-had-a-sea-shorts",
+    "number": 12,
+    "titleNe": "",
+    "titleEn": "यदि नेपालमा समुद्र भएको भए? 🌊🇳🇵 | What If Nepal Had a Sea? #shorts",
+    "date": "2026-11-10",
+    "topic": "history",
+    "youtubeId": "QCulfBowGNw",
+    "tiktokUrl": "https://www.tiktok.com/@thahathiyo/video/7707244672141348102?is_from_webapp=1&sender_device=pc&web_id=7702768696733959687",
+    "instagramUrl": "https://www.instagram.com/reel/Dfo9FMNjFXZ/?utm_source=ig_web_copy_link&obrf=MzRlODBiNWFlZA==&srtk=MzRlODBiNWFlZA==",
+    "facebookUrl": "https://www.facebook.com/share/r/1FPruNu7bH/",
+    "description": "",
+    "descriptionEn": "नेपालमा समुद्र भएको भए कस्तो हुन्थ्यो? दसैंमा पानीजहाजको टिकट, पोखरामा सर्फिङ, गैंडा बिचमा! अनि नेपालमा साँच्चै डल्फिन छ भन्ने थाहा थियो? तर के तपाईंलाई थाहा छ, नेपालमा साँच्चै समुद्र थियो? सगरमाथाको टुप्पोमा भेटिने समुद्री जीवका अवशेष र कालीगण्डकीको शालिग्राम त्यसैको प्रमाण हुन्। \nWhat if landlocked Nepal had a sea? It once did: the Himalaya rose from the floor of the ancient Tethys Ocean, which is why sea fossils sit on top of Mount Everest.",
+    "facts": [
+      {
+        "ne": "",
+        "en": "Nepal is a landlocked country; it has no coastline."
+      },
+      {
+        "ne": "",
+        "en": "Nepal has dolphins: the endangered Ganges River dolphin (Nepali: सुँस) lives in the Karnali, Sapta Koshi and Narayani rivers. A 2015 study estimated only 37–42 dolphins left in Nepal."
+      },
+      {
+        "ne": "",
+        "en": "The Tethys Ocean once lay between the Indian plate and Asia. India began colliding with Asia about 50–60 million years ago, and the old sea floor was pushed up to form the Himalaya."
+      },
+      {
+        "ne": "",
+        "en": "The rocks at the top of Mount Everest (from about 8,600 m to the 8,849 m summit) are limestones and other sedimentary rocks of the Tethys Ocean, and contain fossils of sea creatures such as trilobites."
+      },
+      {
+        "ne": "",
+        "en": "Shaligrams from the Kali Gandaki river are fossils of ammonites, extinct sea animals. Religious belief: Hindus worship shaligram as a form of Lord Vishnu."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Nepal: Logistics Infrastructure and Port Assessment (Logistics Cluster, WFP)",
+        "url": "https://dlca.logcluster.org/print-preview-current-section/2066"
+      },
+      {
+        "title": "How to Build the World's Highest Mountain (Eos, American Geophysical Union):",
+        "url": "https://eos.org/features/how-to-build-the-worlds-highest-mountain"
+      },
+      {
+        "title": "The endangered Ganges River dolphin in Nepal: abundance, habitat and conservation threats (Endangered Species Research, 2015)",
+        "url": "https://int-res.com/abstracts/esr/v29/n1/p59-68"
+      },
+      {
+        "title": "Shaligrams, the sacred fossils worshipped by Hindus and Buddhists for over 2,000 years (The Himalayan Times)",
+        "url": "https://thehimalayantimes.com/world/shaligrams-are-becoming-rarer-because-of-climate-change"
+      }
+    ]
   }
 ]
