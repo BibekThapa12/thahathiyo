@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import raw from "../data/videos.json";
 import { CHANNEL, SOCIALS, TOPICS, type Platform, type TopicId } from "../data/site";
-import { guessTopic } from "./videoMd";
+import { guessTopic, cleanTitle } from "./videoMd";
 
 export type Fact = { ne: string; en: string };
 export type Source = { title: string; url: string };
@@ -121,7 +121,11 @@ export function getVideos(): Promise<Video[]> {
 
 async function build(): Promise<Video[]> {
   // slug may be left empty in the admin form: it then comes from the title
-  const entries = (raw as VideoEntry[]).map((v) => ({ ...v, youtubeId: ytId(v.youtubeId), slug: v.slug || slugify(v.titleEn || v.titleNe) }));
+  // titles drop YouTube emoji and #shorts (flag emoji show as "NP" on Windows); saved slugs are kept as they are
+  const entries = (raw as VideoEntry[]).map((v) => {
+    const titleEn = cleanTitle(v.titleEn ?? ""), titleNe = cleanTitle(v.titleNe ?? "");
+    return { ...v, titleEn, titleNe, youtubeId: ytId(v.youtubeId), slug: v.slug || slugify(titleEn || titleNe) };
+  });
   const rss = await fetchRss();
   const added: VideoEntry[] = [];
 
@@ -136,7 +140,7 @@ async function build(): Promise<Video[]> {
       if (!v.date && item.published) v.date = item.published.slice(0, 10);
       continue;
     }
-    const { ne, en } = splitTitle(item.title);
+    const { ne, en } = splitTitle(cleanTitle(item.title));
     const slugBase = slugify(en) || `video-${item.id.toLowerCase()}`;
     const slug = [...entries, ...added].some((e) => e.slug === slugBase) ? `${slugBase}-${item.id.toLowerCase()}` : slugBase;
     const firstLine = item.description.split("\n").find((l) => l.trim()) ?? "";

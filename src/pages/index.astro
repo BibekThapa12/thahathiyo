@@ -17,7 +17,9 @@ import { u } from "../lib/url";
 const videos = await getVideos();
 const published = videos.filter((v) => v.status === "published");
 const latest = published.find((v) => v.youtubeId);
-const rest = videos.filter((v) => v !== latest);
+// the next coming-soon video is teased inside the featured card, so it leaves the grid
+const next = videos.find((v) => v.status === "coming-soon");
+const rest = videos.filter((v) => v !== latest && v !== next);
 // the home board shows 6 cards at a time; the ‹ › pager pages through the rest
 const SHOWN = 6;
 ---
@@ -67,6 +69,12 @@ const SHOWN = 6;
             {(latest.descriptionEn || latest.description) && <p class="latest-desc">{latest.descriptionEn || latest.description}</p>}
             <WatchOn video={latest} />
             <a class="btn" href={u(`videos/${latest.slug}/`)}><T ne="तथ्य र स्रोत हेर्नुहोस् →" en="Facts & sources →" mix="Facts र sources हेर्नुस् →" /></a>
+            {next && (
+              <a class="next" href={u(`videos/${next.slug}/`)}>
+                <span class="next-tag">Coming next</span>
+                <span class="next-title">#{next.number} · {(next.titleEn || next.titleNe).split(" | ").pop()}</span>
+              </a>
+            )}
           </div>
         </article>
         </li>
@@ -367,6 +375,40 @@ const SHOWN = 6;
   .feature-copy :global(.watch-on) {
     margin-bottom: 16px;
   }
+  /* "Coming next" strip at the bottom of the featured card */
+  .next {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 2px dashed var(--ink);
+    text-decoration: none;
+  }
+  .next-tag {
+    flex: none;
+    padding: 2px 10px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #fff;
+    background: var(--vermilion);
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+  }
+  .next-title {
+    font-weight: 700;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .next:hover .next-title {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
   .feature-copy .btn {
     width: 100%;
     justify-content: center;
@@ -413,6 +455,14 @@ const SHOWN = 6;
     .feature-copy :global(.watch-on ul) {
       grid-template-columns: 1fr;
       gap: 6px;
+    }
+    /* tighter spacing so the "Coming next" strip still fits one 1280x800 screen */
+    .feature-copy :global(.watch-on) {
+      margin-bottom: 12px;
+    }
+    .next {
+      margin-top: 10px;
+      padding-top: 8px;
     }
   }
   .about {
