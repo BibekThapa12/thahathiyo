@@ -149,8 +149,10 @@ export function parseVideoMd(md: string): VideoMd {
     warnings.push("The header's youtube_title and the post kit's Title line differ; used the header's.");
   if (!titleEn) titleEn = cleanTitle(headEn ? `${headNe} | ${headEn}` : heading);
 
-  const metaTopic = (meta.topic ?? "").toLowerCase() as TopicId;
-  const topicFromFile = TOPICS.includes(metaTopic);
+  // the id ("religion") or its label as written ("Religion & Culture", "Festival"): matched on the first word
+  const first = (meta.topic ?? "").toLowerCase().match(/[a-z]+/)?.[0] ?? "";
+  const metaTopic = (first.length >= 4 ? TOPICS.find((id) => id.startsWith(first)) : undefined) as TopicId;
+  const topicFromFile = !!metaTopic;
   if (meta.topic && !topicFromFile) warnings.push(`The header's topic “${meta.topic}” isn't one of ${TOPICS.join(", ")}, so the topic was guessed.`);
 
   const isNe = (s: string) => DEVANAGARI.test(s) && (s.match(/[ऀ-ॿ]/g)?.length ?? 0) > (s.match(/[a-z]/gi)?.length ?? 0);

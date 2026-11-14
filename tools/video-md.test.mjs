@@ -83,6 +83,9 @@ test("files without a header still work", () => {
 
 test("religion: accepted in the header and guessed from the text", () => {
   assert.equal(parseVideoMd("---\ntopic: religion\n---\n" + md).topic, "religion");
+  for (const t of ["Religion & Culture", "religion and culture", "Festivals", "festival", "SCIENCE"])
+    assert.equal(parseVideoMd(`---\ntopic: ${t}\n---\n` + md).topicFromFile, true, t);
+  assert.equal(parseVideoMd("---\ntopic: Religion & Culture\n---\n" + md).topic, "religion");
   assert.equal(parseVideoMd("# 14 — पशुपतिनाथ मन्दिर (Pashupatinath Temple)\n## Facts\n- A Hindu temple of Shiva.").topic, "religion");
 });
 
