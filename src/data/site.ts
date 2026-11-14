@@ -35,5 +35,6 @@ export const TOPICS = [
   { id: "history", ne: "इतिहास", en: "History", mix: "History कुरा" },
   { id: "science", ne: "विज्ञान", en: "Science", mix: "Science गफ" },
   { id: "business", ne: "ब्यापार", en: "Business", mix: "Business खेल" },
+  { id: "religion", ne: "धर्म र संस्कृति", en: "Religion & Culture", mix: "धर्म र Culture" },
 ] as const;
 export type TopicId = (typeof TOPICS)[number]["id"];

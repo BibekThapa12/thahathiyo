@@ -282,6 +282,7 @@ button.chip:active {
 .chip.history { background: #f9d6d2; }
 .chip.science { background: #cfe7e1; }
 .chip.business { background: #d9dcf3; }
+.chip.religion { background: #ece0f4; }
 /* after the topic colours, so the selected chip always turns gold */
 .chip[aria-current="page"],
 .chip[aria-pressed="true"] {

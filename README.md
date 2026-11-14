@@ -40,7 +40,7 @@ Node 22 or newer.
   "titleNe": "तिहारमा कुकुरलाई किन पूजा गरिन्छ?",
   "titleEn": "Kukur Tihar Explained",
   "date": "2026-11-03",             // empty = not posted yet ("coming soon")
-  "topic": "festivals",             // festivals | history | science | business
+  "topic": "festivals",             // festivals | history | science | business | religion
   "art": "dog",                     // fallback illustration: mascot, dog, crow, lake, diya, flag, calendar, cans
   "youtubeId": "_VQJmCZUQmM",
   "tiktokUrl": "", "instagramUrl": "…", "facebookUrl": "…",

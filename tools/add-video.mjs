@@ -4,7 +4,7 @@
 //
 // Usage:
 //   node tools/add-video.mjs --file path/to/07-kag-tihar.md [--youtube ID_or_URL] [--date 2026-11-06]
-//        [--topic festivals|history|science|business] [--slug kag-tihar] [--art crow]
+//        [--topic festivals|history|science|business|religion] [--slug kag-tihar] [--art crow]
 //        [--instagram URL] [--facebook URL] [--tiktok URL] [--postkit path/to/07-postkit.md] [--replace] [--dry]
 //
 // What it reads from the markdown:

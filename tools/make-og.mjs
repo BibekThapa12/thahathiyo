@@ -24,7 +24,7 @@ const logo = (s) => `<svg viewBox="0 0 120 120" width="${s}" height="${s}"><circ
 const tri = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='18'%3E%3Cpolygon points='0,0 18,18 36,0' fill='%23F7C948'/%3E%3Cpolygon points='36,0 54,18 72,0' fill='%23D4372C'/%3E%3C/svg%3E")`;
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const digits = (n) => String(n).replace(/[0-9]/g, (d) => "०१२३४५६७८९"[d]);
-const topics = { festivals: "चाडपर्व · Festivals", history: "इतिहास · History", science: "विज्ञान · Science", business: "ब्यापार · Business" };
+const topics = { festivals: "चाडपर्व · Festivals", history: "इतिहास · History", science: "विज्ञान · Science", business: "ब्यापार · Business", religion: "धर्म र संस्कृति · Religion & Culture" };
 
 const card = ({ kicker, title, sub }) => `<!doctype html><html><head><meta charset="utf-8"><style>
 @font-face{font-family:Mukta;font-weight:800;src:url(${font(800)})}

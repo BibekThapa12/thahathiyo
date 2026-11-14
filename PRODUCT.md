@@ -14,7 +14,7 @@ Other audiences (diaspora, sponsors, students) are not confirmed as design targe
 
 ## Product Purpose
 
-The public website for the Nepali fact-video channel @thahathiyo, which posts one-minute explainers in Nepali about Nepal and the world (festivals, history, science, business), about one a day.
+The public website for the Nepali fact-video channel @thahathiyo, which posts one-minute explainers in Nepali about Nepal and the world (festivals, history, science, business, religion and culture), about one a day.
 
 The site's main job is to **grow followers**: turn a visitor from one Short into a follower of the channel on the platforms. Success means a visitor leaves following @thahathiyo.
 

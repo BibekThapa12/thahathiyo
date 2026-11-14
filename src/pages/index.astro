@@ -25,7 +25,7 @@ const SHOWN = 6;
 ---
 <Base
   title="थाहा थियो? | Thaha Thiyo — Facts in Nepali, every day"
-  description="One-minute fact videos in Nepali about Nepal and the world: festivals, history, science and business. Every video comes with its key facts and sources."
+  description="One-minute fact videos in Nepali about Nepal and the world: festivals, history, science, business, and religion and culture. Every video comes with its key facts and sources."
 >
   <section class="hero band">
     <div class="wrap hero-grid">
@@ -80,6 +80,7 @@ const SHOWN = 6;
         </li>
       )}
       {rest.map((v, i) => <li class={i >= SHOWN ? "extra" : undefined} data-topic-item={v.topic}><VideoCard video={v} /></li>)}
+      <li class="board-empty" hidden>No videos in this topic yet. The first one is on its way!</li>
       </ul>
       </>) : (
         <div class="empty card"><MascotBurst mood="wonder" /><p><T ne="भिडियो छिट्टै आउँदैछन्!" en="Videos coming soon!" mix="Videos छिट्टै आउँदैछन्!" /></p></div>
@@ -93,7 +94,7 @@ const SHOWN = 6;
         <div class="art"><MascotBurst mood="smile" /></div>
         <div>
           <h2 id="about-h"><T ne="हाम्रो बारेमा" en="About the channel" mix="हाम्रो About" /></h2>
-          <p class="lead"><T ne="थाहा थियो? नेपाली भाषामा रोचक तथ्य र सजिलो व्याख्या गर्ने छोटा भिडियोको च्यानल हो — हरेक दिन एउटा नयाँ “थाहा थियो?”" en="Thaha Thiyo (“Did you know?”) makes one-minute explainers in Nepali about Nepal and the world: festivals, history, science and business." mix="थाहा थियो? नेपालीमा interesting facts र easy explanation दिने short video channel हो — हरेक दिन एउटा नयाँ “थाहा थियो?” moment।" /></p>
+          <p class="lead"><T ne="थाहा थियो? नेपाली भाषामा रोचक तथ्य र सजिलो व्याख्या गर्ने छोटा भिडियोको च्यानल हो — हरेक दिन एउटा नयाँ “थाहा थियो?”" en="Thaha Thiyo (“Did you know?”) makes one-minute explainers in Nepali about Nepal and the world: festivals, history, science, business, and religion and culture." mix="थाहा थियो? नेपालीमा interesting facts र easy explanation दिने short video channel हो — हरेक दिन एउटा नयाँ “थाहा थियो?” moment।" /></p>
           <p><T ne="ढाका टोपी, गोलो चस्मा, दौरा-सुरुवाल र निधारमा “?” आकारको कपाल — यही हो थाहा। हरेक भिडियोमा ऊ कथा सुनाउँछ, अचम्म मान्छ र प्रश्न सोध्छ।" en="Thaha wears a dhaka topi, round glasses and daura suruwal, with a “?” curl on his forehead — the channel's mark. He narrates every video." mix="ढाका टोपी, round चस्मा, दौरा-सुरुवाल र निधारमा “?” shape को कपाल — यही हो थाहा। हरेक video मा ऊ story सुनाउँछ, shock हुन्छ र question सोध्छ।" /></p>
         </div>
       </div>
@@ -129,9 +130,11 @@ const SHOWN = 6;
   const parts = () => ({ board: document.getElementById("board"), pager: document.getElementById("pager") });
   function render() {
     const { board, pager } = parts();
-    if (!board || !pager) return;
+    if (!board) return;
+    const cards = [...board.querySelectorAll<HTMLElement>(":scope > li:not(.feature-cell):not(.board-empty)")].filter((li) => !li.hidden);
+    board.querySelector<HTMLElement>(".board-empty")!.hidden = cards.length > 0; // a topic with no videos yet
+    if (!pager) return;
     board.dataset.paged = "";
-    const cards = [...board.querySelectorAll<HTMLElement>(":scope > li:not(.feature-cell)")].filter((li) => !li.hidden);
     const pages = Math.max(1, Math.ceil(cards.length / PAGE));
     page = Math.min(page, pages - 1);
     cards.forEach((li, i) => li.classList.toggle("paged-out", Math.floor(i / PAGE) !== page));
@@ -253,6 +256,14 @@ const SHOWN = 6;
   .board:not([data-paged]) > .extra,
   .board > .paged-out {
     display: none;
+  }
+  .board-empty {
+    grid-column: 1 / -1;
+    align-self: start;
+    padding: 16px 18px;
+    font-weight: 700;
+    border: 2px dashed var(--ink);
+    border-radius: 16px;
   }
   @media (prefers-reduced-motion: no-preference) {
     .board > .enter {
@@ -442,6 +453,9 @@ const SHOWN = 6;
     .feature-cell {
       grid-column: 1 / span 3;
       grid-row: 1 / span 2;
+    }
+    .board-empty {
+      grid-column: 4 / span 3;
     }
     .feature {
       /* minmax(0, …): the text column may shrink instead of pushing out of the card */

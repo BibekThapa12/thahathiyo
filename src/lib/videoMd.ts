@@ -19,6 +19,7 @@ export type VideoMd = {
 export function guessTopic(text: string): TopicId {
   const s = text.toLowerCase();
   if (/(तिहार|दशैं|दशैँ|चाड|पर्व|पूजा|टीका|तीज|देउसी|भैलो|tihar|dashain|festival|holi|chhath|losar|tika|teej|deusi|bhailo)/.test(s)) return "festivals";
+  if (/(धर्म|संस्कृति|मन्दिर|देवता|भगवान|religion|religious|culture|temple|deity|mythology)/.test(s)) return "religion";
   if (/(ब्रान्ड|ब्यापार|व्यापार|कम्पनी|business|brand|company|market|case study)/.test(s)) return "business";
   if (/(विज्ञान|दिमाग|science|brain|space|planet|lake|earthquake|भूकम्प)/.test(s)) return "science";
   return "history";
@@ -56,7 +57,7 @@ export function cleanLink(url: string) {
   return s;
 }
 
-const TOPICS: TopicId[] = ["festivals", "history", "science", "business"];
+const TOPICS: TopicId[] = ["festivals", "history", "science", "business", "religion"];
 
 export function parseVideoMd(md: string): VideoMd {
   const text = md.replace(/\r/g, "");

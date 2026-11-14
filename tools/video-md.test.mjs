@@ -81,6 +81,11 @@ test("files without a header still work", () => {
   assert.equal(v.number, 12);
 });
 
+test("religion: accepted in the header and guessed from the text", () => {
+  assert.equal(parseVideoMd("---\ntopic: religion\n---\n" + md).topic, "religion");
+  assert.equal(parseVideoMd("# 14 — पशुपतिनाथ मन्दिर (Pashupatinath Temple)\n## Facts\n- A Hindu temple of Shiva.").topic, "religion");
+});
+
 test("guesses the festivals topic from the text", () => {
   assert.equal(parseVideoMd("# 9 — भाइटीका (Bhai Tika)\n## Facts\n- Bhai Tika is the last day of Tihar.").topic, "festivals");
 });
