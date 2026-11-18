@@ -995,5 +995,87 @@
         "url": "https://www.livescience.com/32252-do-snakes-have-ears.html"
       }
     ]
+  },
+  {
+    "slug": "why-periods-became-taboo",
+    "number": 17,
+    "titleNe": "देवी पूजा गर्ने समाजमा, महिनावारीमा छोरीलाई किन रोकियो?",
+    "titleEn": "देवी पूजा गर्ने समाजमा, महिनावारीमा छोरीलाई किन रोकियो? वास्तविक कारण | Why Periods Became Taboo",
+    "date": "2026-11-18",
+    "topic": "religion",
+    "youtubeId": "",
+    "tiktokUrl": "",
+    "instagramUrl": "",
+    "facebookUrl": "",
+    "description": "दुर्गा माताको पूजा गर्ने घरमा महिनावारी भएकी छोरीलाई किन भान्सा र पूजा कोठाबाट टाढा राखियो? भागवत पुराणको इन्द्रको कथा, आराम दिने पुरानो नियम, छाउपडीले लिएका ज्यान, कानुन, कामाख्याको अम्बुबाची मेला र विज्ञानको कुरा, एउटै परिवारको कथामा। आराम दिनु माया हो, टाढा राख्नु होइन। 🌸",
+    "descriptionEn": "Why are menstruating girls in many Nepali homes kept out of the kitchen and the puja room in a society that worships the goddess? A family story about the Indra legend in the Bhagavata Purana, the old rule of rest that became isolation, chhaupadi and Nepal's 2017 law, the Ambubachi Mela at Kamakhya, and what science says about periods.",
+    "facts": [
+      {
+        "ne": "",
+        "en": "The Bhagavata Purana (6.9) tells that Indra, after killing Vishvarupa, shared the sin among land, water, trees and women, and that women's share is seen in monthly menstruation."
+      },
+      {
+        "ne": "",
+        "en": "Many smritis and dharmasutras advise women to avoid strenuous work and household duties during menstruation and to rest."
+      },
+      {
+        "ne": "",
+        "en": "One common explanation is that rest was enforced through a religious rule, and another is hygiene, since women had only cloth and no pads or running water."
+      },
+      {
+        "ne": "",
+        "en": "Chhaupadi, mostly in western Nepal, forces menstruating women to stay in sheds or separate huts, treating them as impure."
+      },
+      {
+        "ne": "",
+        "en": "Nepal's Supreme Court outlawed chhaupadi in 2005, and a 2017 law made it punishable by three months in prison, a Rs 3,000 fine, or both."
+      },
+      {
+        "ne": "",
+        "en": "Since 2005, at least 20 women have died in Sudurpaschim Province linked to chhaupadi, according to the Kathmandu Post (2025)."
+      },
+      {
+        "ne": "",
+        "en": "At the Kamakhya temple in Assam, the Ambubachi Mela celebrates the goddess's annual menstruation."
+      },
+      {
+        "ne": "",
+        "en": "UNICEF says menstruation is a normal and healthy part of life, and that food does not spoil when a menstruating woman touches it."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Śrīmad-Bhāgavatam 6.9.9 (Vedabase)",
+        "url": "https://www.vedabase.com/en/sb/6/9/9"
+      },
+      {
+        "title": "Hindu view of menstruation, part 1 (Bṛhat)",
+        "url": "https://brhat.in/dhiti/hindu-view-of-menstruation-1"
+      },
+      {
+        "title": "Not just a bar at Sabarimala (ThePrint)",
+        "url": "https://theprint.in/governance/not-just-a-bar-at-sabarimala-menstruation-has-got-women-ostracised-labelled-witches/136190"
+      },
+      {
+        "title": "Inhumane tradition, editorial (The Kathmandu Post)",
+        "url": "https://kathmandupost.com/editorial/2025/07/15/inhumane-tradition"
+      },
+      {
+        "title": "Law in Nepal sets penalties for forcing a woman into a menstrual shed (NPR)",
+        "url": "https://www.npr.org/sections/goatsandsoda/2017/08/10/542585664/law-in-nepal-sets-penalties-for-forcing-a-woman-into-a-menstrual-shed"
+      },
+      {
+        "title": "Why are menstruating women not allowed in the kitchen (Nua)",
+        "url": "https://nuawoman.com/blog/why-are-menstruating-women-not-allowed-in-the-kitchen-myth-explained/"
+      },
+      {
+        "title": "Busted: eight myths about periods (UNICEF Australia)",
+        "url": "https://www.unicef.org.au/stories/busted-eight-myths-about-periods"
+      },
+      {
+        "title": "Fast facts: nine things you didn't know about menstruation (UNICEF)",
+        "url": "https://www.unicef.org/press-releases/fast-facts-nine-things-you-didnt-know-about-menstruation"
+      }
+    ]
   }
 ]
