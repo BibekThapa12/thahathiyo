@@ -1077,5 +1077,87 @@
         "url": "https://www.unicef.org/press-releases/fast-facts-nine-things-you-didnt-know-about-menstruation"
       }
     ]
+  },
+  {
+    "slug": "same-gotra-marriage-explained",
+    "number": 18,
+    "titleNe": "एउटै गोत्रमा विवाह किन गर्न हुँदैन?",
+    "titleEn": "एउटै गोत्रमा विवाह किन गर्न हुँदैन? भारद्वाज + भारद्वाज =? | Same Gotra Marriage Explained",
+    "date": "2026-11-19",
+    "topic": "religion",
+    "youtubeId": "",
+    "tiktokUrl": "",
+    "instagramUrl": "",
+    "facebookUrl": "",
+    "description": "कुण्डली ३६ मध्ये ३२ गुण मिल्यो, तर गोत्र दुवैको भारद्वाज! एउटै गोत्रमा बिहे किन नगर्ने भनिन्छ? मनुस्मृति, गौतम धर्मसूत्रको प्रवर नियम, Y chromosome theory, नजिकको नातामा हुने वास्तविक जोखिम र नेपालको कानुन, एउटै रिश्ताको कथामा। अनि तपाईं भए? A: बिहे गर्ने, B: नगर्ने 👇",
+    "descriptionEn": "Why do many Nepali families refuse a marriage when the boy and girl share a gotra? A rishta scene explains gotra as rishi lineage, Manusmriti 3.5, Gautama's pravara rule, the unproven Y-chromosome theory, the real genetic risk of close-relative marriage, and what Nepal's Penal Code section 220 actually says.",
+    "facts": [
+      {
+        "ne": "",
+        "en": "A gotra is a lineage traced through the father back to a rishi; the same gotra is treated as descent from the same rishi."
+      },
+      {
+        "ne": "",
+        "en": "Manusmriti 3.5 recommends a bride who is not a sapinda on the mother's side and not of the father's gotra."
+      },
+      {
+        "ne": "",
+        "en": "Medhatithi's commentary on Manusmriti 3.5 notes that Gautama (4.2) allows marriage between parties with different pravaras, so marriage may happen even when the gotra is the same; Medhatithi himself rejects this, citing Yajnavalkya, so the video says \"रे\" (it is said)."
+      },
+      {
+        "ne": "",
+        "en": "The idea that a gotra equals a Y-chromosome line is widely shared online but is not a proven scientific claim."
+      },
+      {
+        "ne": "",
+        "en": "Shared DNA between relatives halves with each generation of separation, so after many generations it is close to zero."
+      },
+      {
+        "ne": "",
+        "en": "Children of first cousins have about a 4–6% risk of birth defects, compared with about 2–3% in the general population (Hamamy 2017); Bennett et al. (2002) estimate 1.7–2.8% extra risk."
+      },
+      {
+        "ne": "",
+        "en": "Nepal's National Penal Code 2074, section 220 (incest) covers relationships within seven generations of one's own clan, and the Civil Code (sections 70 and 72) voids marriages between relatives covered by the incest law. The law is about close kin and clan, not gotra in general."
+      },
+      {
+        "ne": "",
+        "en": "Some communities let a bride be given in kanyadan through her maternal family's gotra as a workaround (Wikipedia, Gotra)."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Manusmriti 3.5, Sanskrit (Wisdom Library)",
+        "url": "https://www.wisdomlib.org/hinduism/book/manu-smriti-sanskrit/d/doc1224433.html"
+      },
+      {
+        "title": "Manusmriti 3.5 with Medhatithi's commentary (Wisdom Library)",
+        "url": "https://www.wisdomlib.org/hinduism/book/manusmriti-with-the-commentary-of-medhatithi/d/doc199777.html"
+      },
+      {
+        "title": "Gautama Dharmasutra, chapter 4 (Wisdom Library)",
+        "url": "https://www.wisdomlib.org/hinduism/book/gautama-dharmas%C5%ABtra/d/doc116304.html"
+      },
+      {
+        "title": "National Penal Code 2074, section 220 (Nepal Laws)",
+        "url": "https://nepallaws.com/Laws/the-national-penal-code-act-2074/part-2-criminal-offences/chapter-18-sexual-offences/section-220-prohibition-of-incest/"
+      },
+      {
+        "title": "National Civil Code 2074, section 72 (Nepal Laws)",
+        "url": "https://nepallaws.com/Laws/the-national-civil-code-act-2074/part-3-family-law/chapter-1-provisions-relating-to-marriage/marriage-to-be-void/"
+      },
+      {
+        "title": "First cousins face lower risk than widely perceived (UW News, 2002)",
+        "url": "https://washington.edu/news/2002/04/03/first-cousins-face-lower-risk-of-having-children-with-genetic-conditions-than-is-widely-perceived"
+      },
+      {
+        "title": "Consanguinity (Hamamy, 2017, GFMER)",
+        "url": "https://www.gfmer.ch/SRH-Course-2017/community-genetics/pdf/Consanguinity-Hamamy-2017.pdf"
+      },
+      {
+        "title": "Gotra (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Gotra"
+      }
+    ]
   }
 ]
