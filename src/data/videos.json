@@ -1159,5 +1159,103 @@
         "url": "https://en.wikipedia.org/wiki/Gotra"
       }
     ]
+  },
+  {
+    "slug": "why-sons-shave-head-after-death",
+    "number": 19,
+    "titleNe": "मृत्यु हुँदा कपाल किन काटिन्छ?",
+    "titleEn": "मृत्यु हुँदा कपाल किन काटिन्छ? छोराले मात्र किन? | Why Sons Shave Head After Death",
+    "date": "2026-11-22",
+    "topic": "religion",
+    "youtubeId": "",
+    "tiktokUrl": "",
+    "instagramUrl": "",
+    "facebookUrl": "",
+    "description": "बुबा बित्दा दाइले मात्र कपाल किन खौरिन्छन्, छोराले मात्र किरिया किन गर्ने? कपाल र अशुद्धिको मान्यता, मनुस्मृतिको 'पुत्र' शब्द, छोरीलाई रोक्ने शास्त्रीय नियम छ कि छैन भन्ने विद्वान्हरूको कुरा, र बनेपाका तीन छोरीको साँचो कथा। तपाईंको परिवारमा छोरीले किरिया गर्न पाउँछ? A: पाउँछ, B: पाउँदैन 👇",
+    "descriptionEn": "Why do sons shave their heads after a death in Nepali Hindu families, and why do only sons perform the kriya? A short family scene explains the belief that hair traps impurity, the Manusmriti 9.138 origin of the word putra, what learned priests say about daughters, and the 2025 Banepa case where three daughters performed their father's rites.",
+    "facts": [
+      {
+        "ne": "",
+        "en": "In Nepal's Hindu custom the mourning period after a death is called kriya and lasts 13 days."
+      },
+      {
+        "ne": "",
+        "en": "During kriya mourners wear plain white clothes without seams, avoid touching others and cook their own food without salt."
+      },
+      {
+        "ne": "",
+        "en": "After the 2015 earthquake the mourners at Pashupatinath were dressed in white, with the men's heads shaved and the women's hair left uncombed."
+      },
+      {
+        "ne": "",
+        "en": "Hindu tradition holds that head and facial hair trap ritual impurity (ashaucha), and shaving at the end of an impurity period marks final purification."
+      },
+      {
+        "ne": "",
+        "en": "Among adults, head shaving is usually restricted to men, while women usually offer a token lock of hair, though a woman may shave her head to fulfil a vow."
+      },
+      {
+        "ne": "",
+        "en": "Manusmriti 9.138 says a son is called putra because he delivers his father from the hell named Put."
+      },
+      {
+        "ne": "",
+        "en": "When a Nepali family has no son it usually looks for a distant male relative or hires a priest, rather than letting a daughter perform the rites."
+      },
+      {
+        "ne": "",
+        "en": "In many Nepali communities it is believed that a daughter performing her parents' rites deprives them of punya (spiritual merit)."
+      },
+      {
+        "ne": "",
+        "en": "Sociologist Narayani Devkota says many senior priests versed in the Dharmashastra affirm that no scriptural ban stops daughters from performing shraddha."
+      },
+      {
+        "ne": "",
+        "en": "In August 2025 three daughters in Banepa, Kavre, lit their 91-year-old father's pyre and began the 13-day kriya, and the village priest confirmed that no religious rule bars daughters."
+      },
+      {
+        "ne": "",
+        "en": "After the Banepa kriya some villagers discussed boycotting the family, and the priest later withdrew from guiding the rituals under pressure."
+      },
+      {
+        "ne": "",
+        "en": "Two sisters in Dhading performed their mother's last rites themselves, doing every ritual except shaving their heads."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Hair, Illustrated Encyclopedia of Hinduism entry (Lochtefeld)",
+        "url": "https://vishvasa.github.io/AgamaH/AryaH/hinduism/sAmya-vaiShamye/articles/lochtefeld_hinduism-encyclopedia/entries/H/Hair"
+      },
+      {
+        "title": "Shaving, Illustrated Encyclopedia of Hinduism entry (Lochtefeld)",
+        "url": "https://vishvasa.github.io/AgamaH/AryaH/hinduism/sAmya-vaiShamye/articles/lochtefeld_hinduism-encyclopedia/entries/S/Shaving"
+      },
+      {
+        "title": "Manusmriti 9.138 with Medhatithi's commentary (Wisdom Library)",
+        "url": "https://www.wisdomlib.org/hinduism/book/manusmriti-with-the-commentary-of-medhatithi/d/doc201511.html"
+      },
+      {
+        "title": "For Nepal's women, there's no right to mourn (The Kathmandu Post)",
+        "url": "https://kathmandupost.com/national/2025/06/16/for-women-no-right-to-mourn"
+      },
+      {
+        "title": "We lit our father's pyre, then the boycott began (The Kathmandu Post)",
+        "url": "https://kathmandupost.com/national/2025/08/13/we-lit-our-father-s-pyre-then-boycott-began"
+      },
+      {
+        "title": "Widowhood hard to transcend in tradition-bound Nepal (The World)",
+        "url": "https://theworld.org/stories/2015/12/24/widows-can-have-tough-time-nepal-thats-changing-quickly"
+      },
+      {
+        "title": "Prayers and ritual baths as Nepal ends quake mourning (AFP via The Standard)",
+        "url": "https://www.standardmedia.co.ke/amp/article/2000161375/standard-digital"
+      },
+      {
+        "title": "Daughters perform final rites of their mother (Republica)",
+        "url": "https://devorigin.nagariknetwork.com/news/daughters-perform-final-rites-of-their-mother"
+      }
+    ]
   }
 ]
