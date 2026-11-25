@@ -1261,16 +1261,67 @@
   {
     "slug": "why-nepalis-worship-the-peepal-tree",
     "number": 20,
-    "titleNe": "पिपलको बोटलाई किन पूजा गरिन्छ? रातमा पनि अक्सिजन?",
-    "titleEn": "Why Nepalis Worship the Peepal Tree",
+    "titleNe": "पिपलको बोटलाई किन पूजा गरिन्छ?",
+    "titleEn": "पिपलको बोटलाई किन पूजा गरिन्छ? रातमा पनि अक्सिजन? | Why Nepalis Worship the Peepal Tree",
     "date": "2026-11-24",
-    "topic": "festivals",
+    "topic": "religion",
     "youtubeId": "3AMGfRBuRJU",
-    "tiktokUrl": "",
-    "instagramUrl": "",
-    "facebookUrl": "",
+    "tiktokUrl": "https://www.tiktok.com/@thahathiyo/video/7711697823984520449",
+    "instagramUrl": "https://www.instagram.com/reel/DgH9YirIc0-/",
+    "facebookUrl": "https://www.facebook.com/share/r/1JAkJsJ3dg/",
     "description": "चौतारीको पिपलमा धागो बाँधेर किन पूजा गरिन्छ? गीतामा कृष्णले \"रूखहरूमा म अश्वत्थ हुँ\" भनेका छन्, जरामा ब्रह्मा, काण्डमा विष्णु, पातमा शिव बस्छन् भन्ने मान्यता छ, र बुद्धलाई ज्ञान पनि पिपलकै रूखमुनि प्राप्त भयो। तर पिपलले रातमा पनि अक्सिजन दिन्छ भन्ने कुरा? 🌙",
-    "facts": [],
-    "sources": []
+    "facts": [
+      {
+        "ne": "",
+        "en": "In Bhagavad Gita 10.26 Krishna says that among all trees he is the ashvattha, the peepal (sacred fig)."
+      },
+      {
+        "ne": "",
+        "en": "A widely held Hindu belief says Brahma lives in the peepal's roots, Vishnu in its trunk and Shiva in its leaves."
+      },
+      {
+        "ne": "",
+        "en": "Gautama Buddha attained enlightenment while meditating under a sacred fig (Ficus religiosa) at present-day Bodh Gaya, and that tree is called the Bodhi tree."
+      },
+      {
+        "ne": "",
+        "en": "Many people believe the peepal gives oxygen by day and by night."
+      },
+      {
+        "ne": "",
+        "en": "A peepal growing on another tree can take in carbon dioxide at night through a CAM-type pathway, but a peepal rooted in soil switches to ordinary C3 photosynthesis."
+      },
+      {
+        "ne": "",
+        "en": "Like other plants, a peepal does not release large amounts of oxygen at night; at night plants take in oxygen through respiration."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Bhagavad Gita 10.26 (Holy Bhagavad Gita)",
+        "url": "https://www.holy-bhagavad-gita.org/chapter/10/verse/26/en/"
+      },
+      {
+        "title": "Peepal (Flowers of India)",
+        "url": "https://flowersofindia.net/catalog/slides/Peepal.html"
+      },
+      {
+        "title": "Bodhi Tree (Wikipedia)",
+        "url": "https://www.Wikipedia.org/wiki/Bodhi_tree"
+      },
+      {
+        "title": "Genomic and transcriptomic analysis of sacred fig (BMC Genomics)",
+        "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10100241/"
+      },
+      {
+        "title": "Why does the peepal tree continuously produce oxygen (GKToday)",
+        "url": "https://www.gktoday.in/question/the-peepal-tree-releases-oxygen-all-the-time-becau"
+      },
+      {
+        "title": "Plants that release oxygen even at night (Skeptics Stack Exchange)",
+        "url": "https://kiwix.lema.org/skeptics.stackexchange.com_en_all_2023-11/questions/8883/plants-that-release-oxygen-even-at-night"
+      }
+    ],
+    "descriptionEn": "Why do Nepalis tie thread round the peepal and worship it? A short family scene explains Bhagavad Gita 10.26, the belief that Brahma, Vishnu and Shiva live in its roots, trunk and leaves, the Buddha's Bodhi tree, and checks the popular claim that the peepal gives oxygen at night."
   }
 ]
